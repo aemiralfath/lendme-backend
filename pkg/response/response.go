@@ -12,6 +12,8 @@ const (
 	InternalServerErrorMessage = "Something is wrong, pls try again later."
 	NotFoundMessage            = "Route does not exist, please check again your route path."
 	UnauthorizedMessage        = "Unauthorized"
+
+	AuthEmailAlreadyExistMessage = "Email already exist."
 )
 
 type JSONResponse struct {

@@ -9,7 +9,7 @@ import (
 
 type User struct {
 	UserID    uuid.UUID `json:"user_id" db:"user_id" binding:"omitempty"`
-	RoleID    uuid.UUID `json:"role_id" db:"role_id" binding:"omitempty"`
+	RoleID    int       `json:"role_id" db:"role_id" binding:"omitempty"`
 	Name      string    `json:"name" db:"name" binding:"omitempty"`
 	Email     string    `json:"email" db:"email" binding:"required,email"`
 	Password  string    `json:"-" db:"password" binding:"required"`
@@ -38,7 +38,7 @@ func (u *User) SanitizePassword() {
 	u.Password = ""
 }
 
-func (u *User) PrepareCreate() error {
+func (u *User) PrepareCreate(roleID int) error {
 	id, err := uuid.NewUUID()
 	if err != nil {
 		return err
@@ -49,6 +49,7 @@ func (u *User) PrepareCreate() error {
 	}
 
 	u.UserID = id
+	u.RoleID = roleID
 	u.Email = strings.ToLower(strings.TrimSpace(u.Email))
 	u.Password = strings.TrimSpace(u.Password)
 

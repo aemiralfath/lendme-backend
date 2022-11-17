@@ -1,20 +1,42 @@
 package server
 
 import (
+	authDelivery "final-project-backend/internal/auth/delivery"
+	authRepository "final-project-backend/internal/auth/repository"
+	authUseCase "final-project-backend/internal/auth/usecase"
+	"final-project-backend/internal/middleware"
 	"final-project-backend/pkg/response"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func (s *Server) MapHandlers() error {
+	aRepo := authRepository.NewAuthRepository(s.db)
+	authUC := authUseCase.NewAuthUseCase(s.cfg, aRepo)
+	authHandlers := authDelivery.NewAuthHandlers(s.cfg, authUC, s.logger)
+
+	mw := middleware.NewMiddlewareManager(s.cfg, []string{"*"}, s.logger)
+	s.gin.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH"},
+		AllowHeaders:     []string{"Origin", "Content-type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "http://localhost:3001"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
+
 	s.gin.NoRoute(func(c *gin.Context) {
 		response.ErrorResponse(c.Writer, response.NotFoundMessage, http.StatusNotFound)
 	})
 
 	v1 := s.gin.Group("/api/v1")
-	v1.GET("/", func(c *gin.Context) {
-		response.ErrorResponse(c.Writer, response.VersionMessage, http.StatusOK)
-	})
+	authGroup := v1.Group("/auth")
+	authDelivery.MapAuthRoutes(authGroup, authHandlers, mw)
 
 	return nil
 }

@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS vouchers CASCADE;
 CREATE TABLE "users"
 (
     "user_id"    UUID PRIMARY KEY NOT NULL,
-    "role_id"    UUID             NOT NULL,
+    "role_id"    int              NOT NULL,
     "name"       VARCHAR          NOT NULL,
     "email"      VARCHAR UNIQUE   NOT NULL,
     "password"   VARCHAR          NOT NULL,
@@ -27,9 +27,9 @@ CREATE TABLE "users"
 
 CREATE TABLE "roles"
 (
-    "role_id"    UUID PRIMARY KEY NOT NULL,
-    "name"       VARCHAR          NOT NULL,
-    "created_at" timestamp        NOT NULL DEFAULT (NOW()),
+    "role_id"    serial PRIMARY KEY NOT NULL,
+    "name"       VARCHAR            NOT NULL,
+    "created_at" timestamp          NOT NULL DEFAULT (NOW()),
     "updated_at" timestamp
 );
 
@@ -37,8 +37,8 @@ CREATE TABLE "debtors"
 (
     "debtor_id"            UUID PRIMARY KEY NOT NULL,
     "user_id"              UUID             NOT NULL,
-    "credit_health_id"     UUID             NOT NULL,
-    "contract_tracking_id" UUID             NOT NULL,
+    "credit_health_id"     int              NOT NULL,
+    "contract_tracking_id" int              NOT NULL,
     "credit_limit"         FLOAT            NOT NULL DEFAULT 0,
     "created_at"           timestamp        NOT NULL DEFAULT (NOW()),
     "updated_at"           timestamp
@@ -46,17 +46,17 @@ CREATE TABLE "debtors"
 
 CREATE TABLE "credit_health_types"
 (
-    "credit_health_id" UUID PRIMARY KEY NOT NULL,
-    "name"             VARCHAR          NOT NULL,
-    "created_at"       timestamp        NOT NULL DEFAULT (NOW()),
+    "credit_health_id" serial PRIMARY KEY NOT NULL,
+    "name"             VARCHAR            NOT NULL,
+    "created_at"       timestamp          NOT NULL DEFAULT (NOW()),
     "updated_at"       timestamp
 );
 
 CREATE TABLE "contract_tracking_types"
 (
-    "contract_tracking_id" UUID PRIMARY KEY NOT NULL,
-    "name"                 VARCHAR          NOT NULL,
-    "created_at"           timestamp        NOT NULL DEFAULT (NOW()),
+    "contract_tracking_id" serial PRIMARY KEY NOT NULL,
+    "name"                 VARCHAR            NOT NULL,
+    "created_at"           timestamp          NOT NULL DEFAULT (NOW()),
     "updated_at"           timestamp
 );
 
@@ -64,28 +64,27 @@ CREATE TABLE "lendings"
 (
     "lending_id"        UUID PRIMARY KEY NOT NULL,
     "debtor_id"         UUID             NOT NULL,
-    "loan_period_id"    UUID             NOT NULL,
-    "lending_status_id" UUID             NOT NULL,
+    "loan_period_id"    int              NOT NULL,
+    "lending_status_id" int              NOT NULL,
     "amount"            float            NOT NULL,
-    "delay"             int              NOT NULL,
     "created_at"        timestamp        NOT NULL DEFAULT (NOW()),
     "updated_at"        timestamp
 );
 
 CREATE TABLE "loan_periods"
 (
-    "loan_period_id" UUID PRIMARY KEY NOT NULL,
-    "duration"       int              NOT NULL,
-    "percentage"     int              NOT NULL,
-    "created_at"     timestamp        NOT NULL DEFAULT (NOW()),
+    "loan_period_id" serial PRIMARY KEY NOT NULL,
+    "duration"       int                NOT NULL,
+    "percentage"     int                NOT NULL,
+    "created_at"     timestamp          NOT NULL DEFAULT (NOW()),
     "updated_at"     timestamp
 );
 
 CREATE TABLE "lending_status_types"
 (
-    "lending_status_id" UUID PRIMARY KEY NOT NULL,
-    "name"              VARCHAR          NOT NULL,
-    "created_at"        timestamp        NOT NULL DEFAULT (NOW()),
+    "lending_status_id" serial PRIMARY KEY NOT NULL,
+    "name"              VARCHAR            NOT NULL,
+    "created_at"        timestamp          NOT NULL DEFAULT (NOW()),
     "updated_at"        timestamp
 );
 
@@ -93,7 +92,7 @@ CREATE TABLE "installments"
 (
     "installment_id"        UUID PRIMARY KEY NOT NULL,
     "lending_id"            UUID             NOT NULL,
-    "installment_status_id" UUID             NOT NULL,
+    "installment_status_id" int              NOT NULL,
     "amount"                float            NOT NULL,
     "due_date"              timestamp        NOT NULL,
     "created_at"            timestamp        NOT NULL DEFAULT (NOW()),
@@ -102,9 +101,9 @@ CREATE TABLE "installments"
 
 CREATE TABLE "installment_status_types"
 (
-    "installment_status_id" UUID PRIMARY KEY NOT NULL,
-    "name"                  VARCHAR          NOT NULL,
-    "created_at"            timestamp        NOT NULL DEFAULT (NOW()),
+    "installment_status_id" serial PRIMARY KEY NOT NULL,
+    "name"                  VARCHAR            NOT NULL,
+    "created_at"            timestamp          NOT NULL DEFAULT (NOW()),
     "updated_at"            timestamp
 );
 
@@ -113,9 +112,10 @@ CREATE TABLE "payments"
     "payment_id"       UUID PRIMARY KEY NOT NULL,
     "installment_id"   UUID             NOT NULL,
     "voucher_id"       UUID,
-    "fine"             float            NOT NULL DEFAULT 0,
-    "payment_date"     timestamp        NOT NULL DEFAULT (NOW()),
-    "discount_payment" int
+    "payment_fine"     float            NOT NULL DEFAULT 0,
+    "payment_discount" float            NOT NULL DEFAULT 0,
+    "payment_amount"   float            NOT NULL,
+    "payment_date"     timestamp        NOT NULL DEFAULT (NOW())
 );
 
 CREATE TABLE "vouchers"

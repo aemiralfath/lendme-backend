@@ -1,4 +1,4 @@
-package auth
+package body
 
 const (
 	InvalidNameFormatMessage     = "Invalid name format."
