@@ -8,5 +8,7 @@ import (
 
 func MapUserRoutes(userGroup *gin.RouterGroup, h user.Handlers, mw *middleware.MWManager) {
 	userGroup.Use(mw.AuthJWTMiddleware())
+	userGroup.Use(mw.UserMiddleware())
 	userGroup.GET("/details", h.DebtorDetails)
+	userGroup.PUT("/contract", h.ContractConfirm)
 }

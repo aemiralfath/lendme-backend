@@ -14,6 +14,10 @@ const (
 	UnauthorizedMessage        = "Unauthorized"
 
 	AuthEmailAlreadyExistMessage = "Email already exist."
+	DebtorIDNotExist             = "Debtor ID not exist."
+	ContractIDNotExist           = "Contract ID not exist."
+	ContractNotAccepted          = "Contract not accepted."
+	ContractAlreadyAccepted      = "Contract already accepted."
 )
 
 type JSONResponse struct {

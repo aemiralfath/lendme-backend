@@ -21,15 +21,32 @@ func NewUserHandlers(cfg *config.Config, userUC user.UseCase, log logger.Logger)
 	return &userHandlers{cfg: cfg, userUC: userUC, logger: log}
 }
 
-func (h *userHandlers) DebtorDetails(c *gin.Context) {
+func (h *userHandlers) ContractConfirm(c *gin.Context) {
 	userID, exist := c.Get("userID")
 	if !exist {
 		response.ErrorResponse(c.Writer, response.UnauthorizedMessage, http.StatusUnauthorized)
 		return
 	}
 
-	roleID, exist := c.Get("roleID")
-	if !exist || roleID.(float64) != 2 {
+	debtor, err := h.userUC.ConfirmContract(c, userID.(string))
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
+}
+
+func (h *userHandlers) DebtorDetails(c *gin.Context) {
+	userID, exist := c.Get("userID")
+	if !exist {
 		response.ErrorResponse(c.Writer, response.UnauthorizedMessage, http.StatusUnauthorized)
 		return
 	}

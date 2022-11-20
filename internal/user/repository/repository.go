@@ -15,6 +15,18 @@ func NewUserRepository(db *gorm.DB) user.Repository {
 	return &userRepo{db: db}
 }
 
+func (r *userRepo) UpdateContractByUserID(ctx context.Context, debtor *models.Debtor) (*models.Debtor, error) {
+	if err := r.db.Omit("ContractTracking", "CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).Save(debtor).Error; err != nil {
+		return debtor, err
+	}
+
+	if err := r.db.Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).First(debtor).Error; err != nil {
+		return debtor, err
+	}
+
+	return debtor, nil
+}
+
 func (r *userRepo) GetDebtorDetailsByID(ctx context.Context, userID string) (*models.Debtor, error) {
 	userDebtor := &models.Debtor{}
 	if err := r.db.Preload("CreditHealth").Preload("ContractTracking").WithContext(ctx).
