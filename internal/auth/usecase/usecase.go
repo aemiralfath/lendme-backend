@@ -70,7 +70,7 @@ func (u *authUC) Login(ctx context.Context, body body.LoginRequest) (*models.Use
 
 	foundUser.SanitizePassword()
 
-	token, err := utils.GenerateJWTToken(foundUser.UserID.String(), u.cfg)
+	token, err := utils.GenerateJWTToken(foundUser.UserID.String(), foundUser.RoleID, u.cfg)
 	if err != nil {
 		return nil, err
 	}

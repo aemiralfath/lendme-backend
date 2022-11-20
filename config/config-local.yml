@@ -3,6 +3,8 @@ server:
   Port: :8080
   Mode: Development
   JwtSecretKey: secretkey
+  JwtIssuer: issuerforjwt
+  JwtExpMin: 60
   CookieName: jwt-token
   ReadTimeout: 5
   WriteTimeout: 5

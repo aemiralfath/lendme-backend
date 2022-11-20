@@ -11,15 +11,18 @@ import (
 )
 
 type Claims struct {
-	ID string `json:"id"`
+	ID     string `json:"id"`
+	RoleID int    `json:"role_id"`
 	jwt.StandardClaims
 }
 
-func GenerateJWTToken(userID string, config *config.Config) (string, error) {
+func GenerateJWTToken(userID string, userRole int, config *config.Config) (string, error) {
 	claims := &Claims{
-		ID: userID,
+		ID:     userID,
+		RoleID: userRole,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),
+			ExpiresAt: time.Now().Add(time.Duration(config.Server.JwtExpMin) * time.Minute).Unix(),
+			Issuer:    config.Server.JwtIssuer,
 		},
 	}
 

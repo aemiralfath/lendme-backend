@@ -18,6 +18,8 @@ type ServerConfig struct {
 	Port              string
 	Mode              string
 	JwtSecretKey      string
+	JwtIssuer         string
+	JwtExpMin         int
 	ReadTimeout       time.Duration
 	WriteTimeout      time.Duration
 	CtxDefaultTimeout time.Duration
