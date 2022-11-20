@@ -18,7 +18,7 @@ func (mw *MWManager) AuthJWTMiddleware() gin.HandlerFunc {
 
 		mw.logger.Infof("body middleware bearerHeader %s", claim["id"].(string))
 		c.Set("userID", claim["id"].(string))
-		c.Set("roleID", claim["role_id"].(string))
+		c.Set("roleID", claim["role_id"].(float64))
 		c.Next()
 	}
 }

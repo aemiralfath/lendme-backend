@@ -48,10 +48,10 @@ func (r *authRepo) FindByEmail(ctx context.Context, user *models.User) (*models.
 }
 
 func (r *authRepo) GetUserDetailsByID(ctx context.Context, userId string) (*models.User, error) {
-	userWallet := &models.User{}
-	if err := r.db.Preload("Role").WithContext(ctx).Where("user_id = ?", userId).First(userWallet).Error; err != nil {
-		return userWallet, err
+	user := &models.User{}
+	if err := r.db.Preload("Role").WithContext(ctx).Where("user_id = ?", userId).First(user).Error; err != nil {
+		return user, err
 	}
 
-	return userWallet, nil
+	return user, nil
 }
