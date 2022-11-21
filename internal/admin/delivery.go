@@ -3,6 +3,6 @@ package admin
 import "github.com/gin-gonic/gin"
 
 type Handlers interface {
-	UpdateContractStatus(c *gin.Context)
+	UpdateDebtorByID(c *gin.Context)
 	GetDebtors(c *gin.Context)
 }

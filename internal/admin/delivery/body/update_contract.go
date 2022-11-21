@@ -8,8 +8,10 @@ import (
 )
 
 type UpdateContractRequest struct {
-	DebtorID         string `json:"debtor_id"`
-	ContractStatusID int    `json:"contract_status_id"`
+	DebtorID         string  `json:"debtor_id"`
+	CreditLimit      float64 `json:"credit_limit"`
+	CreditHealthID   int     `json:"credit_health_id"`
+	ContractStatusID int     `json:"contract_status_id"`
 }
 
 func (r *UpdateContractRequest) Validate() (UnprocessableEntity, error) {
@@ -17,6 +19,8 @@ func (r *UpdateContractRequest) Validate() (UnprocessableEntity, error) {
 	entity := UnprocessableEntity{
 		Fields: map[string]string{
 			"debtor_id":          "",
+			"credit_limit":       "",
+			"credit_health_id":   "",
 			"contract_status_id": "",
 		},
 	}
@@ -25,6 +29,16 @@ func (r *UpdateContractRequest) Validate() (UnprocessableEntity, error) {
 	if r.DebtorID == "" {
 		unprocessableEntity = true
 		entity.Fields["debtor_id"] = InvalidDebtorIDFormatMessage
+	}
+
+	if r.CreditLimit < 0 {
+		unprocessableEntity = true
+		entity.Fields["credit_limit"] = InvalidCreditLimitFormatMessage
+	}
+
+	if r.CreditHealthID == 0 {
+		unprocessableEntity = true
+		entity.Fields["credit_health_id"] = InvalidCreditHealthFormatMessage
 	}
 
 	if r.ContractStatusID == 0 {

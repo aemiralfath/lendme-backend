@@ -26,12 +26,13 @@ func (r *adminRepo) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
 
 func (r *adminRepo) GetDebtorByID(ctx context.Context, debtorID string) (*models.Debtor, error) {
 	debtor := &models.Debtor{}
-	if err := r.db.Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtorID).First(debtor).Error; err != nil {
+	if err := r.db.Preload("User").Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtorID).First(debtor).Error; err != nil {
 		return debtor, err
 	}
 
 	return debtor, nil
 }
+
 func (r *adminRepo) GetContractStatusByID(ctx context.Context, contractID int) (*models.ContractTrackingType, error) {
 	contract := &models.ContractTrackingType{}
 	if err := r.db.WithContext(ctx).Where("contract_tracking_id = ?", contractID).First(contract).Error; err != nil {
@@ -40,12 +41,22 @@ func (r *adminRepo) GetContractStatusByID(ctx context.Context, contractID int) (
 
 	return contract, nil
 }
-func (r *adminRepo) UpdateDebtorStatusByID(ctx context.Context, debtor *models.Debtor) (*models.Debtor, error) {
-	if err := r.db.Omit("ContractTracking", "CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).Save(debtor).Error; err != nil {
+
+func (r *adminRepo) GetCreditHealthByID(ctx context.Context, healthID int) (*models.CreditHealthType, error) {
+	health := &models.CreditHealthType{}
+	if err := r.db.WithContext(ctx).Where("credit_health_id = ?", healthID).First(health).Error; err != nil {
+		return health, err
+	}
+
+	return health, nil
+}
+
+func (r *adminRepo) UpdateDebtorByID(ctx context.Context, debtor *models.Debtor) (*models.Debtor, error) {
+	if err := r.db.Omit("ContractTracking", "CreditHealth", "User").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).Save(debtor).Error; err != nil {
 		return debtor, err
 	}
 
-	if err := r.db.Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).First(debtor).Error; err != nil {
+	if err := r.db.Preload("User").Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).First(debtor).Error; err != nil {
 		return debtor, err
 	}
 

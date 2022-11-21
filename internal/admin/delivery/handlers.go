@@ -39,7 +39,7 @@ func (h *adminHandlers) GetDebtors(c *gin.Context) {
 	response.SuccessResponse(c.Writer, debtors, http.StatusOK)
 }
 
-func (h *adminHandlers) UpdateContractStatus(c *gin.Context) {
+func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
 	var requestBody body.UpdateContractRequest
 	if err := c.ShouldBind(&requestBody); err != nil {
 		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
@@ -52,7 +52,7 @@ func (h *adminHandlers) UpdateContractStatus(c *gin.Context) {
 		return
 	}
 
-	debtor, err := h.adminUC.UpdateContractStatus(c, requestBody)
+	debtor, err := h.adminUC.UpdateDebtorByID(c, requestBody)
 	if err != nil {
 		var e *httperror.Error
 		if !errors.As(err, &e) {
