@@ -21,6 +21,15 @@ func NewAdminUseCase(cfg *config.Config, adminRepo admin.Repository) admin.UseCa
 	return &adminUC{cfg: cfg, adminRepo: adminRepo}
 }
 
+func (u *adminUC) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
+	debtors, err := u.adminRepo.GetDebtors(ctx)
+	if err != nil {
+		return debtors, err
+	}
+
+	return debtors, nil
+}
+
 func (u *adminUC) UpdateContractStatus(ctx context.Context, body body.UpdateContractRequest) (*models.Debtor, error) {
 	debtor, err := u.adminRepo.GetDebtorByID(ctx, body.DebtorID)
 	if err != nil {

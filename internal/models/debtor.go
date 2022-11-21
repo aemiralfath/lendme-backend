@@ -13,6 +13,7 @@ type Debtor struct {
 	CreditLimit        float64              `json:"credit_limit" db:"credit_limit" binding:"omitempty"`
 	CreatedAt          time.Time            `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt          time.Time            `json:"updated_at,omitempty" db:"updated_at"`
+	User               User                 `json:"user,omitempty" gorm:"foreignKey:UserID;references:UserID"`
 	CreditHealth       CreditHealthType     `json:"credit_health,omitempty" gorm:"foreignKey:CreditHealthID;references:CreditHealthID"`
 	ContractTracking   ContractTrackingType `json:"contract_tracking,omitempty" gorm:"foreignKey:ContractTrackingID;references:ContractTrackingID"`
 }

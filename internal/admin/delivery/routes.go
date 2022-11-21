@@ -9,5 +9,6 @@ import (
 func MapAdminRoutes(adminGroup *gin.RouterGroup, h admin.Handlers, mw *middleware.MWManager) {
 	adminGroup.Use(mw.AuthJWTMiddleware())
 	adminGroup.Use(mw.AdminMiddleware())
-	adminGroup.PUT("/debtor", h.UpdateContractStatus)
+	adminGroup.GET("/debtors", h.GetDebtors)
+	adminGroup.PUT("/debtors", h.UpdateContractStatus)
 }

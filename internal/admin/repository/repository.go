@@ -15,6 +15,15 @@ func NewAdminRepository(db *gorm.DB) admin.Repository {
 	return &adminRepo{db: db}
 }
 
+func (r *adminRepo) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
+	var debtors []*models.Debtor
+	if err := r.db.Preload("ContractTracking").Preload("CreditHealth").Preload("User").WithContext(ctx).Find(&debtors).Error; err != nil {
+		return debtors, nil
+	}
+
+	return debtors, nil
+}
+
 func (r *adminRepo) GetDebtorByID(ctx context.Context, debtorID string) (*models.Debtor, error) {
 	debtor := &models.Debtor{}
 	if err := r.db.Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtorID).First(debtor).Error; err != nil {

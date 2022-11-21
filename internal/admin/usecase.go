@@ -7,5 +7,6 @@ import (
 )
 
 type UseCase interface {
+	GetDebtors(ctx context.Context) ([]*models.Debtor, error)
 	UpdateContractStatus(ctx context.Context, body body.UpdateContractRequest) (*models.Debtor, error)
 }

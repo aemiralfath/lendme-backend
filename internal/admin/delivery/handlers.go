@@ -22,6 +22,23 @@ func NewAdminHandlers(cfg *config.Config, adminUC admin.UseCase, log logger.Logg
 	return &adminHandlers{cfg: cfg, adminUC: adminUC, logger: log}
 }
 
+func (h *adminHandlers) GetDebtors(c *gin.Context) {
+	debtors, err := h.adminUC.GetDebtors(c)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, debtors, http.StatusOK)
+}
+
 func (h *adminHandlers) UpdateContractStatus(c *gin.Context) {
 	var requestBody body.UpdateContractRequest
 	if err := c.ShouldBind(&requestBody); err != nil {
