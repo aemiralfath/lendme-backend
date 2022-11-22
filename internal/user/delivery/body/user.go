@@ -3,6 +3,7 @@ package body
 const (
 	InvalidLoanPeriodIDFormatMessage = "Invalid loan period id format."
 	InvalidAmountFormatMessage       = "Invalid amount format."
+	InvalidNameFormatMessage         = "Invalid name format."
 )
 
 type UnprocessableEntity struct {

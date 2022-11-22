@@ -4,7 +4,11 @@ import (
 	"context"
 	"final-project-backend/internal/models"
 	"final-project-backend/internal/user"
+	"final-project-backend/pkg/utils"
+	"fmt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+	"math"
 )
 
 type userRepo struct {
@@ -56,4 +60,28 @@ func (r *userRepo) GetDebtorDetailsByID(ctx context.Context, userID string) (*mo
 	}
 
 	return userDebtor, nil
+}
+
+func (r *userRepo) GetLoans(ctx context.Context, debtorID, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+	var loans []*models.Lending
+
+	var totalRows int64
+	r.db.Model(loans).
+		Where("debtor_id = ? AND name ILIKE ? AND lending_status_id in ?", debtorID, fmt.Sprintf("%%%s%%", name), status).
+		Count(&totalRows)
+
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = totalPages
+
+	if err := r.db.WithContext(ctx).
+		Preload("Installments.InstallmentStatus").Preload(clause.Associations).
+		Where("debtor_id = ? AND name ILIKE ? AND lending_status_id in ?", debtorID, fmt.Sprintf("%%%s%%", name), status).
+		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort()).
+		Find(&loans).Error; err != nil {
+		return pagination, err
+	}
+
+	pagination.Rows = loans
+	return pagination, nil
 }

@@ -67,6 +67,7 @@ CREATE TABLE "lendings"
     "debtor_id"         UUID             NOT NULL,
     "loan_period_id"    int              NOT NULL,
     "lending_status_id" int              NOT NULL,
+    "name"              VARCHAR          NOT NULL,
     "amount"            float            NOT NULL,
     "created_at"        timestamp        NOT NULL DEFAULT (NOW()),
     "updated_at"        timestamp
@@ -128,35 +129,97 @@ CREATE TABLE "vouchers"
     "discount_quota"   int              NOT NULL
 );
 
-ALTER TABLE "debtors"
-    ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
+ALTER TABLE
+    "debtors"
+    ADD
+        FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
 
-ALTER TABLE "users"
-    ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("role_id");
+ALTER TABLE
+    "users"
+    ADD
+        FOREIGN KEY ("role_id") REFERENCES "roles" ("role_id");
 
-ALTER TABLE "lendings"
-    ADD FOREIGN KEY ("debtor_id") REFERENCES "debtors" ("debtor_id");
+ALTER TABLE
+    "lendings"
+    ADD
+        FOREIGN KEY ("debtor_id") REFERENCES "debtors" ("debtor_id");
 
-ALTER TABLE "debtors"
-    ADD FOREIGN KEY ("credit_health_id") REFERENCES "credit_health_types" ("credit_health_id");
+ALTER TABLE
+    "debtors"
+    ADD
+        FOREIGN KEY ("credit_health_id") REFERENCES "credit_health_types" ("credit_health_id");
 
-ALTER TABLE "debtors"
-    ADD FOREIGN KEY ("contract_tracking_id") REFERENCES "contract_tracking_types" ("contract_tracking_id");
+ALTER TABLE
+    "debtors"
+    ADD
+        FOREIGN KEY ("contract_tracking_id") REFERENCES "contract_tracking_types" ("contract_tracking_id");
 
-ALTER TABLE "installments"
-    ADD FOREIGN KEY ("lending_id") REFERENCES "lendings" ("lending_id");
+ALTER TABLE
+    "installments"
+    ADD
+        FOREIGN KEY ("lending_id") REFERENCES "lendings" ("lending_id");
 
-ALTER TABLE "lendings"
-    ADD FOREIGN KEY ("lending_status_id") REFERENCES "lending_status_types" ("lending_status_id");
+ALTER TABLE
+    "lendings"
+    ADD
+        FOREIGN KEY ("lending_status_id") REFERENCES "lending_status_types" ("lending_status_id");
 
-ALTER TABLE "lendings"
-    ADD FOREIGN KEY ("loan_period_id") REFERENCES "loan_periods" ("loan_period_id");
+ALTER TABLE
+    "lendings"
+    ADD
+        FOREIGN KEY ("loan_period_id") REFERENCES "loan_periods" ("loan_period_id");
 
-ALTER TABLE "payments"
-    ADD FOREIGN KEY ("installment_id") REFERENCES "installments" ("installment_id");
+ALTER TABLE
+    "payments"
+    ADD
+        FOREIGN KEY ("installment_id") REFERENCES "installments" ("installment_id");
 
-ALTER TABLE "installments"
-    ADD FOREIGN KEY ("installment_status_id") REFERENCES "installment_status_types" ("installment_status_id");
+ALTER TABLE
+    "installments"
+    ADD
+        FOREIGN KEY ("installment_status_id") REFERENCES "installment_status_types" ("installment_status_id");
 
 ALTER TABLE "payments"
     ADD FOREIGN KEY ("voucher_id") REFERENCES "vouchers" ("voucher_id");
+
+ALTER TABLE "payments"
+    ADD FOREIGN KEY ("voucher_id") REFERENCES "vouchers" ("voucher_id");
+
+INSERT INTO "roles" (name)
+VALUES ('admin'),
+       ('user');
+
+INSERT INTO "credit_health_types" (name)
+VALUES ('good'),
+       ('warning'),
+       ('blocked');
+
+INSERT INTO "contract_tracking_types" (name)
+VALUES ('no contract yet'),
+       ('the contract was given to the expedition partner'),
+       ('contract in delivery'),
+       ('contract accepted by user'),
+       ('confirmed contract');
+
+insert into "loan_periods" (duration, percentage)
+values (1, 100),
+       (3, 105),
+       (6, 110),
+       (12, 120),
+       (18, 130),
+       (24, 150);
+
+insert into "lending_status_types" (name)
+values ('new'),
+       ('approved'),
+       ('on progress'),
+       ('paid');
+
+insert into "installment_status_types" (name)
+values ('on progress'),
+       ('paid');
+
+-- // password: Tested8*
+insert into "users" (user_id, role_id, name, email, password)
+values ('101401ce-4a0f-11ed-9772-acde48001122', 1, 'admin', 'admin@seafund.com',
+        '$2a$10$ne0VPTKWnzVsdX7zfg1I1.MVK8RiNJDrXRf3JzoXqjaFdA3jaAGCC');

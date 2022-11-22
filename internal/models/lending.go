@@ -10,6 +10,7 @@ type Lending struct {
 	DebtorID        uuid.UUID         `json:"debtor_id" db:"debtor_id" binding:"omitempty"`
 	LoanPeriodID    int               `json:"loan_period_id" db:"loan_period_id" binding:"omitempty"`
 	LendingStatusID int               `json:"lending_status_id" db:"lending_status_id" binding:"omitempty"`
+	Name            string            `json:"name" db:"name" binding:"omitempty"`
 	Amount          float64           `json:"amount" db:"amount" binding:"omitempty"`
 	CreatedAt       time.Time         `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt       time.Time         `json:"updated_at,omitempty" db:"updated_at"`

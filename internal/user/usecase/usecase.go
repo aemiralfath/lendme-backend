@@ -8,6 +8,7 @@ import (
 	"final-project-backend/internal/user/delivery/body"
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/response"
+	"final-project-backend/pkg/utils"
 	"gorm.io/gorm"
 	"net/http"
 )
@@ -56,6 +57,7 @@ func (u *userUC) CreateLoan(ctx context.Context, userID string, body body.Create
 
 	lending.DebtorID = debtor.DebtorID
 	lending.LoanPeriodID = period.LoanPeriodID
+	lending.Name = body.Name
 	lending.Amount = amount
 	if err = lending.PrepareCreate(); err != nil {
 		return lending, err
@@ -104,4 +106,17 @@ func (u *userUC) GetDebtorDetails(ctx context.Context, userID string) (*models.D
 	}
 
 	return debtor, nil
+}
+
+func (u *userUC) GetLoans(ctx context.Context, userID, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	loans, err := u.userRepo.GetLoans(ctx, debtor.DebtorID.String(), name, status, pagination)
+	if err != nil {
+		return nil, err
+	}
+	return loans, nil
 }
