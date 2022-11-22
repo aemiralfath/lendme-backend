@@ -10,6 +10,7 @@ import (
 	"final-project-backend/pkg/response"
 	"gorm.io/gorm"
 	"net/http"
+	"time"
 )
 
 type adminUC struct {
@@ -28,6 +29,46 @@ func (u *adminUC) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
 	}
 
 	return debtors, nil
+}
+
+func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending, err := u.adminRepo.GetLendingByID(ctx, lendingID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return lending, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
+		return lending, err
+	}
+
+	lending.LendingStatusID = 2
+	lending, err = u.adminRepo.UpdateLendingByID(ctx, lending)
+	if err != nil {
+		return lending, err
+	}
+
+	var installments []*models.Installment
+	installmentAmount := lending.Amount / float64(lending.LoanPeriod.Duration)
+	for i := 0; i < lending.LoanPeriod.Duration; i++ {
+		installment := &models.Installment{}
+		installmentDate := time.Now()
+		installmentDate = installmentDate.AddDate(0, i+1, 0)
+
+		installment.LendingID = lending.LendingID
+		installment.Amount = installmentAmount
+		installment.DueDate = time.Date(installmentDate.Year(), installmentDate.Month(), 25, 0, 0, 0, installmentDate.Nanosecond(), installmentDate.Location())
+		installments = append(installments, installment)
+
+		if err := installment.PrepareCreate(); err != nil {
+			return lending, err
+		}
+	}
+
+	lending, err = u.adminRepo.CreateInstallments(ctx, lendingID, installments)
+	if err != nil {
+		return lending, err
+	}
+
+	return lending, nil
 }
 
 func (u *adminUC) UpdateDebtorByID(ctx context.Context, body body.UpdateContractRequest) (*models.Debtor, error) {

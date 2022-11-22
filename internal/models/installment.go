@@ -15,3 +15,15 @@ type Installment struct {
 	UpdatedAt           time.Time             `json:"updated_at,omitempty" db:"updated_at"`
 	InstallmentStatus   InstallmentStatusType `json:"installment_status,omitempty" gorm:"foreignKey:InstallmentStatusID;references:InstallmentStatusID"`
 }
+
+func (i *Installment) PrepareCreate() error {
+	id, err := uuid.NewUUID()
+	if err != nil {
+		return err
+	}
+
+	i.InstallmentID = id
+	i.InstallmentStatusID = 1
+
+	return nil
+}

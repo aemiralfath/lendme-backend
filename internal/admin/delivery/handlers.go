@@ -39,6 +39,35 @@ func (h *adminHandlers) GetDebtors(c *gin.Context) {
 	response.SuccessResponse(c.Writer, debtors, http.StatusOK)
 }
 
+func (h *adminHandlers) ApproveLoan(c *gin.Context) {
+	var requestBody body.ApproveLoanRequest
+	if err := c.ShouldBind(&requestBody); err != nil {
+		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
+		return
+	}
+
+	invalidFields, err := requestBody.Validate()
+	if err != nil {
+		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
+		return
+	}
+
+	lending, err := h.adminUC.ApproveLoan(c, requestBody.LendingID)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, lending, http.StatusOK)
+}
+
 func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
 	var requestBody body.UpdateContractRequest
 	if err := c.ShouldBind(&requestBody); err != nil {

@@ -15,6 +15,7 @@ const (
 
 	AuthEmailAlreadyExistMessage       = "Email already exist."
 	DebtorIDNotExist                   = "Debtor ID not exist."
+	LendingIDNotExist                  = "Lending ID not exist."
 	ContractIDNotExist                 = "Contract ID not exist."
 	ContractNotAccepted                = "Contract not accepted."
 	ContractNotConfirmed               = "Contract not confirmed."

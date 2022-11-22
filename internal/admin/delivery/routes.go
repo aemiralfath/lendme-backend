@@ -11,4 +11,5 @@ func MapAdminRoutes(adminGroup *gin.RouterGroup, h admin.Handlers, mw *middlewar
 	adminGroup.Use(mw.AdminMiddleware())
 	adminGroup.GET("/debtors", h.GetDebtors)
 	adminGroup.PUT("/debtors", h.UpdateDebtorByID)
+	adminGroup.PUT("/debtors/lending", h.ApproveLoan)
 }

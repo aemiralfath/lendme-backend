@@ -5,6 +5,7 @@ import (
 	"final-project-backend/internal/admin"
 	"final-project-backend/internal/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type adminRepo struct {
@@ -22,6 +23,24 @@ func (r *adminRepo) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
 	}
 
 	return debtors, nil
+}
+
+func (r *adminRepo) GetLendingByID(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending := &models.Lending{}
+	if err := r.db.Preload(clause.Associations).WithContext(ctx).Where("lending_id = ?", lendingID).First(lending).Error; err != nil {
+		return lending, err
+	}
+
+	return lending, nil
+}
+
+func (r *adminRepo) GetLendingWithInstallmentByID(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending := &models.Lending{}
+	if err := r.db.Preload("Installments.InstallmentStatus").Preload(clause.Associations).WithContext(ctx).Where("lending_id = ?", lendingID).First(lending).Error; err != nil {
+		return lending, err
+	}
+
+	return lending, nil
 }
 
 func (r *adminRepo) GetDebtorByID(ctx context.Context, debtorID string) (*models.Debtor, error) {
@@ -56,9 +75,36 @@ func (r *adminRepo) UpdateDebtorByID(ctx context.Context, debtor *models.Debtor)
 		return debtor, err
 	}
 
-	if err := r.db.Preload("User").Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).First(debtor).Error; err != nil {
+	debtor, err := r.GetDebtorByID(ctx, debtor.DebtorID.String())
+	if err != nil {
 		return debtor, err
 	}
 
 	return debtor, nil
+}
+
+func (r *adminRepo) UpdateLendingByID(ctx context.Context, lending *models.Lending) (*models.Lending, error) {
+	if err := r.db.Omit("LoanPeriod", "LendingStatus", "Installments").WithContext(ctx).Where("lending_id = ?", lending.LendingID).Save(lending).Error; err != nil {
+		return lending, err
+	}
+
+	lending, err := r.GetLendingByID(ctx, lending.LendingID.String())
+	if err != nil {
+		return lending, err
+	}
+
+	return lending, nil
+}
+
+func (r *adminRepo) CreateInstallments(ctx context.Context, lendingID string, installments []*models.Installment) (*models.Lending, error) {
+	if err := r.db.WithContext(ctx).Create(installments).Error; err != nil {
+		return nil, err
+	}
+
+	lending, err := r.GetLendingWithInstallmentByID(ctx, lendingID)
+	if err != nil {
+		return lending, err
+	}
+
+	return lending, nil
 }

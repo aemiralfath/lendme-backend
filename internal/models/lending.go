@@ -15,7 +15,7 @@ type Lending struct {
 	UpdatedAt       time.Time         `json:"updated_at,omitempty" db:"updated_at"`
 	LoanPeriod      LoanPeriod        `json:"loan_period,omitempty" gorm:"foreignKey:LoanPeriodID;references:LoanPeriodID"`
 	LendingStatus   LendingStatusType `json:"lending_status,omitempty" gorm:"foreignKey:LendingStatusID;references:LendingStatusID"`
-	Installments    []*Installment    `json:"installments,omitempty" gorm:"foreignKey:LendingID;references:LendingID"`
+	Installments    []Installment     `json:"installments,omitempty" gorm:"foreignKey:LendingID;references:LendingID"`
 }
 
 func (l *Lending) PrepareCreate() error {

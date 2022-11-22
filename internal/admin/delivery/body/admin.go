@@ -2,6 +2,7 @@ package body
 
 const (
 	InvalidDebtorIDFormatMessage       = "Invalid debtor id format."
+	InvalidLendingIDFormatMessage      = "Invalid lending id format."
 	InvalidContractStatusFormatMessage = "Invalid contract status format."
 	InvalidCreditHealthFormatMessage   = "Invalid credit health format."
 	InvalidCreditLimitFormatMessage    = "Invalid credit limit format."
