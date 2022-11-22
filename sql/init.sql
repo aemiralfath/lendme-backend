@@ -40,6 +40,7 @@ CREATE TABLE "debtors"
     "credit_health_id"     int              NOT NULL,
     "contract_tracking_id" int              NOT NULL,
     "credit_limit"         FLOAT            NOT NULL DEFAULT 0,
+    "credit_used"          FLOAT            NOT NULL DEFAULT 0,
     "created_at"           timestamp        NOT NULL DEFAULT (NOW()),
     "updated_at"           timestamp
 );

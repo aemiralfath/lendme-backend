@@ -11,4 +11,5 @@ func MapUserRoutes(userGroup *gin.RouterGroup, h user.Handlers, mw *middleware.M
 	userGroup.Use(mw.UserMiddleware())
 	userGroup.GET("/details", h.DebtorDetails)
 	userGroup.PUT("/contract", h.ContractConfirm)
+	userGroup.POST("/lending", h.CreateLoan)
 }

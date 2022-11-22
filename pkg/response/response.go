@@ -13,11 +13,16 @@ const (
 	NotFoundMessage            = "Route does not exist, please check again your route path."
 	UnauthorizedMessage        = "Unauthorized"
 
-	AuthEmailAlreadyExistMessage = "Email already exist."
-	DebtorIDNotExist             = "Debtor ID not exist."
-	ContractIDNotExist           = "Contract ID not exist."
-	ContractNotAccepted          = "Contract not accepted."
-	ContractAlreadyAccepted      = "Contract already accepted."
+	AuthEmailAlreadyExistMessage       = "Email already exist."
+	DebtorIDNotExist                   = "Debtor ID not exist."
+	ContractIDNotExist                 = "Contract ID not exist."
+	ContractNotAccepted                = "Contract not accepted."
+	ContractNotConfirmed               = "Contract not confirmed."
+	ContractAlreadyAccepted            = "Contract already accepted."
+	LoanPeriodNotExist                 = "Loan period ID not exist."
+	LoanAmountExceedCreditLimit        = "Loan amount exceed credit limit."
+	LoanAmountExceedCreditLimitWarning = "Loan amount exceed credit limit warning."
+	CreditHealthStatusBlocked          = "Credit health status blocked"
 )
 
 type JSONResponse struct {
