@@ -22,6 +22,15 @@ func NewUserUseCase(cfg *config.Config, userRepo user.Repository) user.UseCase {
 	return &userUC{cfg: cfg, userRepo: userRepo}
 }
 
+func (u *userUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending, err := u.userRepo.GetLoanByID(ctx, lendingID)
+	if err != nil {
+		return lending, err
+	}
+
+	return lending, nil
+}
+
 func (u *userUC) CreateLoan(ctx context.Context, userID string, body body.CreateLoan) (*models.Lending, error) {
 	lending := &models.Lending{}
 	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)

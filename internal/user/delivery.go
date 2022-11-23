@@ -7,4 +7,5 @@ type Handlers interface {
 	ContractConfirm(c *gin.Context)
 	CreateLoan(c *gin.Context)
 	GetLoans(c *gin.Context)
+	GetLoanByID(c *gin.Context)
 }

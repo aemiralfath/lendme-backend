@@ -10,6 +10,7 @@ func MapAdminRoutes(adminGroup *gin.RouterGroup, h admin.Handlers, mw *middlewar
 	adminGroup.Use(mw.AuthJWTMiddleware())
 	adminGroup.Use(mw.AdminMiddleware())
 	adminGroup.GET("/debtors", h.GetDebtors)
+	adminGroup.GET("/debtors/:id", h.GetDebtorByID)
 	adminGroup.PUT("/debtors", h.UpdateDebtorByID)
 	adminGroup.PUT("/debtors/lending", h.ApproveLoan)
 }

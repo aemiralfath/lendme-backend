@@ -10,7 +10,7 @@ func (mw *MWManager) UserMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		roleID, exist := c.Get("roleID")
 		if !exist || roleID.(float64) != 2 {
-			response.ErrorResponse(c.Writer, response.UnauthorizedMessage, http.StatusUnauthorized)
+			response.ErrorResponse(c.Writer, response.ForbiddenMessage, http.StatusForbidden)
 			c.Abort()
 			return
 		}

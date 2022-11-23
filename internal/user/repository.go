@@ -12,4 +12,5 @@ type Repository interface {
 	GetDebtorDetailsByID(ctx context.Context, userID string) (*models.Debtor, error)
 	UpdateDebtorByID(ctx context.Context, debtor *models.Debtor) (*models.Debtor, error)
 	CreateLending(ctx context.Context, lending *models.Lending) (*models.Lending, error)
+	GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error)
 }

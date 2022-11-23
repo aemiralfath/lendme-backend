@@ -39,6 +39,24 @@ func (h *adminHandlers) GetDebtors(c *gin.Context) {
 	response.SuccessResponse(c.Writer, debtors, http.StatusOK)
 }
 
+func (h *adminHandlers) GetDebtorByID(c *gin.Context) {
+	id := c.Param("id")
+	debtor, err := h.adminUC.GetDebtorByID(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
+}
+
 func (h *adminHandlers) ApproveLoan(c *gin.Context) {
 	var requestBody body.ApproveLoanRequest
 	if err := c.ShouldBind(&requestBody); err != nil {

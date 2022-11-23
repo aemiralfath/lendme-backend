@@ -31,6 +31,15 @@ func (u *adminUC) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
 	return debtors, nil
 }
 
+func (u *adminUC) GetDebtorByID(ctx context.Context, id string) (*models.Debtor, error) {
+	debtor, err := u.adminRepo.GetDebtorByID(ctx, id)
+	if err != nil {
+		return debtor, err
+	}
+
+	return debtor, nil
+}
+
 func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending, err := u.adminRepo.GetLendingByID(ctx, lendingID)
 	if err != nil {

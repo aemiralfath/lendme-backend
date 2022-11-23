@@ -12,6 +12,7 @@ const (
 	InternalServerErrorMessage = "Something is wrong, pls try again later."
 	NotFoundMessage            = "Route does not exist, please check again your route path."
 	UnauthorizedMessage        = "Unauthorized"
+	ForbiddenMessage           = "Forbidden"
 
 	AuthEmailAlreadyExistMessage       = "Email already exist."
 	DebtorIDNotExist                   = "Debtor ID not exist."

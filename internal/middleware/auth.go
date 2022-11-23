@@ -11,7 +11,7 @@ func (mw *MWManager) AuthJWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claim, err := utils.ExtractJWTFromRequest(c.Request, mw.cfg.Server.JwtSecretKey)
 		if err != nil {
-			response.ErrorResponse(c.Writer, response.UnauthorizedMessage, http.StatusUnauthorized)
+			response.ErrorResponse(c.Writer, response.ForbiddenMessage, http.StatusForbidden)
 			c.Abort()
 			return
 		}

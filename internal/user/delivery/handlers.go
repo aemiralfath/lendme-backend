@@ -107,6 +107,24 @@ func (h *userHandlers) DebtorDetails(c *gin.Context) {
 	response.SuccessResponse(c.Writer, userDebtor, http.StatusOK)
 }
 
+func (h *userHandlers) GetLoanByID(c *gin.Context) {
+	id := c.Param("id")
+	loan, err := h.userUC.GetLoanByID(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, loan, http.StatusOK)
+}
+
 func (h *userHandlers) GetLoans(c *gin.Context) {
 	pagination := &utils.Pagination{}
 	name, status := h.ValidateQueryLoans(c, pagination)

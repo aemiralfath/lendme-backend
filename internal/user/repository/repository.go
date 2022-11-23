@@ -24,7 +24,23 @@ func (r *userRepo) CreateLending(ctx context.Context, lending *models.Lending) (
 		return lending, err
 	}
 
-	if err := r.db.WithContext(ctx).Preload("LoanPeriod").Preload("LendingStatus").Where("lending_id = ?", lending.LendingID).First(lending).Error; err != nil {
+	lending, err := r.GetLoanByID(ctx, lending.LendingID.String())
+	if err != nil {
+		return lending, err
+	}
+
+	return lending, nil
+}
+
+func (r *userRepo) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending := &models.Lending{}
+	if err := r.db.WithContext(ctx).
+		Preload("Installments.InstallmentStatus").
+		Preload("LendingStatus").
+		Preload("LoanPeriod").
+		Preload("Installments", func(db *gorm.DB) *gorm.DB {
+			return db.Order("installments.due_date asc")
+		}).Where("lending_id = ?", lendingID).First(lending).Error; err != nil {
 		return lending, err
 	}
 
