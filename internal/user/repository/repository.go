@@ -32,21 +32,6 @@ func (r *userRepo) CreateLending(ctx context.Context, lending *models.Lending) (
 	return lending, nil
 }
 
-func (r *userRepo) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
-	lending := &models.Lending{}
-	if err := r.db.WithContext(ctx).
-		Preload("Installments.InstallmentStatus").
-		Preload("LendingStatus").
-		Preload("LoanPeriod").
-		Preload("Installments", func(db *gorm.DB) *gorm.DB {
-			return db.Order("installments.due_date asc")
-		}).Where("lending_id = ?", lendingID).First(lending).Error; err != nil {
-		return lending, err
-	}
-
-	return lending, nil
-}
-
 func (r *userRepo) GetLoanPeriodByID(ctx context.Context, periodID int) (*models.LoanPeriod, error) {
 	loanPeriod := &models.LoanPeriod{}
 	if err := r.db.WithContext(ctx).Where("loan_period_id = ?", periodID).First(loanPeriod).Error; err != nil {
@@ -61,7 +46,7 @@ func (r *userRepo) UpdateDebtorByID(ctx context.Context, debtor *models.Debtor) 
 		return debtor, err
 	}
 
-	if err := r.db.Preload("User").Preload("ContractTracking").Preload("CreditHealth").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).First(debtor).Error; err != nil {
+	if err := r.db.Preload(clause.Associations).WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).First(debtor).Error; err != nil {
 		return debtor, err
 	}
 
@@ -70,12 +55,29 @@ func (r *userRepo) UpdateDebtorByID(ctx context.Context, debtor *models.Debtor) 
 
 func (r *userRepo) GetDebtorDetailsByID(ctx context.Context, userID string) (*models.Debtor, error) {
 	userDebtor := &models.Debtor{}
-	if err := r.db.Preload("User").Preload("CreditHealth").Preload("ContractTracking").WithContext(ctx).
+	if err := r.db.Preload(clause.Associations).WithContext(ctx).
 		Where("user_id = ?", userID).First(userDebtor).Error; err != nil {
 		return userDebtor, err
 	}
 
 	return userDebtor, nil
+}
+
+func (r *userRepo) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending := &models.Lending{}
+	if err := r.db.WithContext(ctx).
+		Preload("Debtor."+clause.Associations).
+		Preload("Installments."+clause.Associations).
+		Preload("LendingStatus").
+		Preload("LoanPeriod").
+		Preload("Debtor").
+		Preload("Installments", func(db *gorm.DB) *gorm.DB {
+			return db.Order("installments.due_date asc")
+		}).Where("lending_id = ?", lendingID).First(lending).Error; err != nil {
+		return lending, err
+	}
+
+	return lending, nil
 }
 
 func (r *userRepo) GetLoans(ctx context.Context, debtorID, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
@@ -91,7 +93,9 @@ func (r *userRepo) GetLoans(ctx context.Context, debtorID, name string, status [
 	pagination.TotalPages = totalPages
 
 	if err := r.db.WithContext(ctx).
-		Preload("Installments.InstallmentStatus").Preload(clause.Associations).
+		Preload("Debtor."+clause.Associations).
+		Preload("Installments."+clause.Associations).
+		Preload(clause.Associations).
 		Where("debtor_id = ? AND name ILIKE ? AND lending_status_id in ?", debtorID, fmt.Sprintf("%%%s%%", name), status).
 		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort()).
 		Find(&loans).Error; err != nil {

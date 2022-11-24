@@ -8,8 +8,12 @@ import (
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/logger"
 	"final-project-backend/pkg/response"
+	"final-project-backend/pkg/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 type adminHandlers struct {
@@ -58,19 +62,8 @@ func (h *adminHandlers) GetDebtorByID(c *gin.Context) {
 }
 
 func (h *adminHandlers) ApproveLoan(c *gin.Context) {
-	var requestBody body.ApproveLoanRequest
-	if err := c.ShouldBind(&requestBody); err != nil {
-		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
-		return
-	}
-
-	invalidFields, err := requestBody.Validate()
-	if err != nil {
-		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
-		return
-	}
-
-	lending, err := h.adminUC.ApproveLoan(c, requestBody.LendingID)
+	id := c.Param("id")
+	lending, err := h.adminUC.ApproveLoan(c, id)
 	if err != nil {
 		var e *httperror.Error
 		if !errors.As(err, &e) {
@@ -113,4 +106,94 @@ func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
 	}
 
 	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
+}
+
+func (h *adminHandlers) GetLoanByID(c *gin.Context) {
+	id := c.Param("id")
+	loan, err := h.adminUC.GetLoanByID(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, loan, http.StatusOK)
+}
+
+func (h *adminHandlers) GetLoans(c *gin.Context) {
+	pagination := &utils.Pagination{}
+	name, status := h.ValidateQueryLoans(c, pagination)
+
+	loans, err := h.adminUC.GetLoans(c, name, status, pagination)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, loans, http.StatusOK)
+}
+
+func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pagination) (string, []int) {
+	name := strings.TrimSpace(c.Query("name"))
+	status := strings.TrimSpace(c.Query("status"))
+	sort := strings.TrimSpace(c.Query("sort"))
+	sortBy := strings.TrimSpace(c.Query("sortBy"))
+	limit := strings.TrimSpace(c.Query("limit"))
+	page := strings.TrimSpace(c.Query("page"))
+
+	var statusFilter []int
+	var sortFilter string
+	var sortByFilter string
+	var limitFilter int
+	var pageFilter int
+
+	switch status {
+	case "history":
+		statusFilter = append(statusFilter, 4)
+	default:
+		statusFilter = append(statusFilter, 1, 2, 3)
+	}
+
+	switch sort {
+	case "asc":
+		sortFilter = sort
+	default:
+		sortFilter = "desc"
+	}
+
+	switch sortBy {
+	case "amount":
+		sortByFilter = sortBy
+	default:
+		sortByFilter = "created_at"
+	}
+
+	limitFilter, err := strconv.Atoi(limit)
+	if err != nil || limitFilter < 1 {
+		limitFilter = 10
+	}
+
+	pageFilter, err = strconv.Atoi(page)
+	if err != nil || pageFilter < 1 {
+		pageFilter = 1
+	}
+
+	pagination.Limit = limitFilter
+	pagination.Page = pageFilter
+	pagination.Sort = fmt.Sprintf("%s %s", sortByFilter, sortFilter)
+
+	return name, statusFilter
 }

@@ -8,6 +8,7 @@ import (
 	"final-project-backend/internal/models"
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/response"
+	"final-project-backend/pkg/utils"
 	"gorm.io/gorm"
 	"net/http"
 	"time"
@@ -114,4 +115,21 @@ func (u *adminUC) UpdateDebtorByID(ctx context.Context, body body.UpdateContract
 	}
 
 	return debtor, nil
+}
+
+func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+	loans, err := u.adminRepo.GetLoans(ctx, name, status, pagination)
+	if err != nil {
+		return nil, err
+	}
+	return loans, nil
+}
+
+func (u *adminUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending, err := u.adminRepo.GetLoanByID(ctx, lendingID)
+	if err != nil {
+		return lending, err
+	}
+
+	return lending, nil
 }
