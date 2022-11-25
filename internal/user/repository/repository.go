@@ -105,3 +105,52 @@ func (r *userRepo) GetLoans(ctx context.Context, debtorID, name string, status [
 	pagination.Rows = loans
 	return pagination, nil
 }
+
+func (r *userRepo) GetInstallmentByID(ctx context.Context, installmentID string) (*models.Installment, error) {
+	installment := &models.Installment{}
+	if err := r.db.Preload(clause.Associations).WithContext(ctx).
+		Where("installment_id = ?", installmentID).First(installment).Error; err != nil {
+		return installment, err
+	}
+
+	return installment, nil
+}
+
+func (r *userRepo) GetVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error) {
+	voucher := &models.Voucher{}
+	if err := r.db.WithContext(ctx).
+		Where("voucher_id = ?", voucherID).First(voucher).Error; err != nil {
+		return voucher, err
+	}
+
+	return voucher, nil
+}
+
+func (r *userRepo) CreatePayment(ctx context.Context, payment *models.Payment) (*models.Payment, error) {
+	if err := r.db.WithContext(ctx).Create(payment).Error; err != nil {
+		return payment, err
+	}
+
+	return payment, nil
+}
+
+func (r *userRepo) UpdateInstallment(ctx context.Context, installment *models.Installment) (*models.Installment, error) {
+	if err := r.db.Omit("InstallmentStatus").WithContext(ctx).Where("installment_id = ?", installment.InstallmentID).Save(installment).Error; err != nil {
+		return installment, err
+	}
+
+	installment, err := r.GetInstallmentByID(ctx, installment.InstallmentID.String())
+	if err != nil {
+		return installment, nil
+	}
+
+	return installment, nil
+}
+
+func (r *userRepo) UpdateLending(ctx context.Context, lending *models.Lending) (*models.Lending, error) {
+	if err := r.db.Omit("Debtor", "LoanPeriod", "LendingStatus", "Installments").WithContext(ctx).Where("lending_id = ?", lending.LendingID).Save(lending).Error; err != nil {
+		return lending, err
+	}
+
+	return lending, nil
+}

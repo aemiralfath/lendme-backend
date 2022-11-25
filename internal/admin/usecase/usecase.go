@@ -10,6 +10,7 @@ import (
 	"final-project-backend/pkg/response"
 	"final-project-backend/pkg/utils"
 	"gorm.io/gorm"
+	"math"
 	"net/http"
 	"time"
 )
@@ -57,15 +58,17 @@ func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Le
 	}
 
 	var installments []*models.Installment
-	installmentAmount := lending.Amount / float64(lending.LoanPeriod.Duration)
+	installmentAmount := math.Round(lending.Amount / float64(lending.LoanPeriod.Duration))
+
+	loc, _ := time.LoadLocation("Asia/Jakarta")
 	for i := 0; i < lending.LoanPeriod.Duration; i++ {
 		installment := &models.Installment{}
-		installmentDate := time.Now()
+		installmentDate := time.Now().In(loc)
 		installmentDate = installmentDate.AddDate(0, i+1, 0)
 
 		installment.LendingID = lending.LendingID
 		installment.Amount = installmentAmount
-		installment.DueDate = time.Date(installmentDate.Year(), installmentDate.Month(), 25, 0, 0, 0, installmentDate.Nanosecond(), installmentDate.Location())
+		installment.DueDate = time.Date(installmentDate.Year(), installmentDate.Month(), 25, 23, 59, 59, installmentDate.Nanosecond(), installmentDate.Location())
 		installments = append(installments, installment)
 
 		if err := installment.PrepareCreate(); err != nil {

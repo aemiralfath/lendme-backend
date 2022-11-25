@@ -11,6 +11,7 @@ import (
 	"final-project-backend/pkg/utils"
 	"gorm.io/gorm"
 	"net/http"
+	"time"
 )
 
 type userUC struct {
@@ -29,6 +30,119 @@ func (u *userUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Len
 	}
 
 	return lending, nil
+}
+
+func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.CreatePayment) (*models.Payment, error) {
+	delay := 0
+	payment := &models.Payment{}
+
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+
+	timeNow := time.Now().In(loc)
+
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		return payment, err
+	}
+
+	lending, err := u.userRepo.GetLoanByID(ctx, body.LendingID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return payment, httperror.New(http.StatusBadRequest, response.LendingIDNotExist)
+		}
+		return payment, err
+	}
+
+	if lending.DebtorID != debtor.DebtorID {
+		return payment, httperror.New(http.StatusBadRequest, response.LendingInstallmentNotMatch)
+	}
+
+	installment, err := u.userRepo.GetInstallmentByID(ctx, body.InstallmentID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return payment, httperror.New(http.StatusBadRequest, response.InstallmentNotExist)
+		}
+		return payment, err
+	}
+
+	if installment.InstallmentStatusID != 1 {
+		return payment, httperror.New(http.StatusBadRequest, response.InstallmentAlreadyPaid)
+	}
+
+	voucher := &models.Voucher{}
+	if body.VoucherID != "" {
+		voucher, err = u.userRepo.GetVoucherByID(ctx, body.VoucherID)
+		if err != nil {
+			if err == gorm.ErrRecordNotFound {
+				return payment, httperror.New(http.StatusBadRequest, response.VoucherNotExist)
+			}
+			return payment, err
+		}
+	}
+
+	delayTime := timeNow.Sub(installment.DueDate)
+	if delayTime.Seconds() > 0 {
+		delay = int(delayTime.Hours()/24) + 1
+	}
+
+	payment.VoucherID = nil
+	if voucher.DiscountQuota > 0 && (timeNow.Sub(voucher.ActiveDate).Seconds() >= 0 && timeNow.Sub(voucher.ExpireDate).Seconds() <= 0) {
+		payment.VoucherID = &voucher.VoucherID
+		payment.PaymentDiscount = installment.Amount * float64(voucher.DiscountPayment/100.0)
+	}
+
+	payment.InstallmentID = installment.InstallmentID
+	payment.PaymentFine = float64(5000 * delay)
+	payment.PaymentAmount = installment.Amount - payment.PaymentDiscount + payment.PaymentFine
+	if err := payment.PrepareCreate(); err != nil {
+		return payment, nil
+	}
+
+	payment, err = u.userRepo.CreatePayment(ctx, payment)
+	if err != nil {
+		return payment, err
+	}
+
+	debtor.CreditUsed = debtor.CreditUsed - installment.Amount
+	debtor.TotalDelay = debtor.TotalDelay + delay
+
+	switch {
+	case debtor.TotalDelay > 20:
+		debtor.CreditHealthID = 3
+	case debtor.TotalDelay > 10:
+		debtor.CreditHealthID = 2
+	}
+
+	debtor, err = u.userRepo.UpdateDebtorByID(ctx, debtor)
+	if err != nil {
+		return payment, err
+	}
+
+	installment.InstallmentStatusID = 2
+	installment, err = u.userRepo.UpdateInstallment(ctx, installment)
+	if err != nil {
+		return payment, err
+	}
+
+	totalPaid := 0
+	for _, installment := range lending.Installments {
+		if installment.InstallmentStatusID == 2 {
+			totalPaid++
+		}
+	}
+
+	if totalPaid == len(lending.Installments)-1 {
+		lending.LendingStatusID = 4
+	} else {
+		lending.LendingStatusID = 3
+	}
+
+	lending, err = u.userRepo.UpdateLending(ctx, lending)
+	if err != nil {
+		return payment, err
+	}
+
+	return payment, nil
 }
 
 func (u *userUC) CreateLoan(ctx context.Context, userID string, body body.CreateLoan) (*models.Lending, error) {

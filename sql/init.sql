@@ -21,16 +21,16 @@ CREATE TABLE "users"
     "name"       VARCHAR          NOT NULL,
     "email"      VARCHAR UNIQUE   NOT NULL,
     "password"   VARCHAR          NOT NULL,
-    "created_at" timestamp        NOT NULL DEFAULT (NOW()),
-    "updated_at" timestamp
+    "created_at" timestamptz      NOT NULL DEFAULT (NOW()),
+    "updated_at" timestamptz
 );
 
 CREATE TABLE "roles"
 (
     "role_id"    serial PRIMARY KEY NOT NULL,
     "name"       VARCHAR            NOT NULL,
-    "created_at" timestamp          NOT NULL DEFAULT (NOW()),
-    "updated_at" timestamp
+    "created_at" timestamptz        NOT NULL DEFAULT (NOW()),
+    "updated_at" timestamptz
 );
 
 CREATE TABLE "debtors"
@@ -41,24 +41,25 @@ CREATE TABLE "debtors"
     "contract_tracking_id" int              NOT NULL,
     "credit_limit"         FLOAT            NOT NULL DEFAULT 0,
     "credit_used"          FLOAT            NOT NULL DEFAULT 0,
-    "created_at"           timestamp        NOT NULL DEFAULT (NOW()),
-    "updated_at"           timestamp
+    "total_delay"          int              NOT NULL DEFAULT 0,
+    "created_at"           timestamptz      NOT NULL DEFAULT (NOW()),
+    "updated_at"           timestamptz
 );
 
 CREATE TABLE "credit_health_types"
 (
     "credit_health_id" serial PRIMARY KEY NOT NULL,
     "name"             VARCHAR            NOT NULL,
-    "created_at"       timestamp          NOT NULL DEFAULT (NOW()),
-    "updated_at"       timestamp
+    "created_at"       timestamptz        NOT NULL DEFAULT (NOW()),
+    "updated_at"       timestamptz
 );
 
 CREATE TABLE "contract_tracking_types"
 (
     "contract_tracking_id" serial PRIMARY KEY NOT NULL,
     "name"                 VARCHAR            NOT NULL,
-    "created_at"           timestamp          NOT NULL DEFAULT (NOW()),
-    "updated_at"           timestamp
+    "created_at"           timestamptz        NOT NULL DEFAULT (NOW()),
+    "updated_at"           timestamptz
 );
 
 CREATE TABLE "lendings"
@@ -69,8 +70,8 @@ CREATE TABLE "lendings"
     "lending_status_id" int              NOT NULL,
     "name"              VARCHAR          NOT NULL,
     "amount"            float            NOT NULL,
-    "created_at"        timestamp        NOT NULL DEFAULT (NOW()),
-    "updated_at"        timestamp
+    "created_at"        timestamptz      NOT NULL DEFAULT (NOW()),
+    "updated_at"        timestamptz
 );
 
 CREATE TABLE "loan_periods"
@@ -78,16 +79,16 @@ CREATE TABLE "loan_periods"
     "loan_period_id" serial PRIMARY KEY NOT NULL,
     "duration"       int                NOT NULL,
     "percentage"     int                NOT NULL,
-    "created_at"     timestamp          NOT NULL DEFAULT (NOW()),
-    "updated_at"     timestamp
+    "created_at"     timestamptz        NOT NULL DEFAULT (NOW()),
+    "updated_at"     timestamptz
 );
 
 CREATE TABLE "lending_status_types"
 (
     "lending_status_id" serial PRIMARY KEY NOT NULL,
     "name"              VARCHAR            NOT NULL,
-    "created_at"        timestamp          NOT NULL DEFAULT (NOW()),
-    "updated_at"        timestamp
+    "created_at"        timestamptz        NOT NULL DEFAULT (NOW()),
+    "updated_at"        timestamptz
 );
 
 CREATE TABLE "installments"
@@ -96,17 +97,17 @@ CREATE TABLE "installments"
     "lending_id"            UUID             NOT NULL,
     "installment_status_id" int              NOT NULL,
     "amount"                float            NOT NULL,
-    "due_date"              timestamp        NOT NULL,
-    "created_at"            timestamp        NOT NULL DEFAULT (NOW()),
-    "updated_at"            timestamp
+    "due_date"              timestamptz      NOT NULL,
+    "created_at"            timestamptz      NOT NULL DEFAULT (NOW()),
+    "updated_at"            timestamptz
 );
 
 CREATE TABLE "installment_status_types"
 (
     "installment_status_id" serial PRIMARY KEY NOT NULL,
     "name"                  VARCHAR            NOT NULL,
-    "created_at"            timestamp          NOT NULL DEFAULT (NOW()),
-    "updated_at"            timestamp
+    "created_at"            timestamptz        NOT NULL DEFAULT (NOW()),
+    "updated_at"            timestamptz
 );
 
 CREATE TABLE "payments"
@@ -117,70 +118,49 @@ CREATE TABLE "payments"
     "payment_fine"     float            NOT NULL DEFAULT 0,
     "payment_discount" float            NOT NULL DEFAULT 0,
     "payment_amount"   float            NOT NULL,
-    "payment_date"     timestamp        NOT NULL DEFAULT (NOW())
+    "payment_date"     timestamptz      NOT NULL DEFAULT (NOW())
 );
 
 CREATE TABLE "vouchers"
 (
     "voucher_id"       UUID PRIMARY KEY NOT NULL,
     "discount_payment" int              NOT NULL,
-    "active_date"      timestamp        NOT NULL,
-    "expired_at"       timestamp        NOT NULL,
-    "discount_quota"   int              NOT NULL
+    "discount_quota"   int              NOT NULL,
+    "active_date"      timestamptz      NOT NULL,
+    "expire_date"      timestamptz      NOT NULL,
+    "created_at"       timestamptz      NOT NULL DEFAULT (NOW()),
+    "updated_at"       timestamptz
 );
 
-ALTER TABLE
-    "debtors"
-    ADD
-        FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
+ALTER TABLE "debtors"
+    ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
 
-ALTER TABLE
-    "users"
-    ADD
-        FOREIGN KEY ("role_id") REFERENCES "roles" ("role_id");
+ALTER TABLE "users"
+    ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("role_id");
 
-ALTER TABLE
-    "lendings"
-    ADD
-        FOREIGN KEY ("debtor_id") REFERENCES "debtors" ("debtor_id");
+ALTER TABLE "lendings"
+    ADD FOREIGN KEY ("debtor_id") REFERENCES "debtors" ("debtor_id");
 
-ALTER TABLE
-    "debtors"
-    ADD
-        FOREIGN KEY ("credit_health_id") REFERENCES "credit_health_types" ("credit_health_id");
+ALTER TABLE "debtors"
+    ADD FOREIGN KEY ("credit_health_id") REFERENCES "credit_health_types" ("credit_health_id");
 
-ALTER TABLE
-    "debtors"
-    ADD
-        FOREIGN KEY ("contract_tracking_id") REFERENCES "contract_tracking_types" ("contract_tracking_id");
+ALTER TABLE "debtors"
+    ADD FOREIGN KEY ("contract_tracking_id") REFERENCES "contract_tracking_types" ("contract_tracking_id");
 
-ALTER TABLE
-    "installments"
-    ADD
-        FOREIGN KEY ("lending_id") REFERENCES "lendings" ("lending_id");
+ALTER TABLE "installments"
+    ADD FOREIGN KEY ("lending_id") REFERENCES "lendings" ("lending_id");
 
-ALTER TABLE
-    "lendings"
-    ADD
-        FOREIGN KEY ("lending_status_id") REFERENCES "lending_status_types" ("lending_status_id");
+ALTER TABLE "lendings"
+    ADD FOREIGN KEY ("lending_status_id") REFERENCES "lending_status_types" ("lending_status_id");
 
-ALTER TABLE
-    "lendings"
-    ADD
-        FOREIGN KEY ("loan_period_id") REFERENCES "loan_periods" ("loan_period_id");
-
-ALTER TABLE
-    "payments"
-    ADD
-        FOREIGN KEY ("installment_id") REFERENCES "installments" ("installment_id");
-
-ALTER TABLE
-    "installments"
-    ADD
-        FOREIGN KEY ("installment_status_id") REFERENCES "installment_status_types" ("installment_status_id");
+ALTER TABLE "lendings"
+    ADD FOREIGN KEY ("loan_period_id") REFERENCES "loan_periods" ("loan_period_id");
 
 ALTER TABLE "payments"
-    ADD FOREIGN KEY ("voucher_id") REFERENCES "vouchers" ("voucher_id");
+    ADD FOREIGN KEY ("installment_id") REFERENCES "installments" ("installment_id");
+
+ALTER TABLE "installments"
+    ADD FOREIGN KEY ("installment_status_id") REFERENCES "installment_status_types" ("installment_status_id");
 
 ALTER TABLE "payments"
     ADD FOREIGN KEY ("voucher_id") REFERENCES "vouchers" ("voucher_id");
