@@ -108,6 +108,36 @@ func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
 	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
 }
 
+func (h *adminHandlers) UpdateInstallment(c *gin.Context) {
+	var requestBody body.UpdateInstallmentRequest
+
+	if err := c.ShouldBind(&requestBody); err != nil {
+		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
+		return
+	}
+
+	invalidFields, err := requestBody.Validate()
+	if err != nil {
+		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
+		return
+	}
+
+	installment, err := h.adminUC.UpdateInstallmentByID(c, requestBody)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, installment, http.StatusOK)
+}
+
 func (h *adminHandlers) GetLoanByID(c *gin.Context) {
 	id := c.Param("id")
 	loan, err := h.adminUC.GetLoanByID(c, id)
@@ -196,4 +226,67 @@ func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pag
 	pagination.Sort = fmt.Sprintf("%s %s", sortByFilter, sortFilter)
 
 	return name, statusFilter
+}
+
+func (h *adminHandlers) GetPayments(c *gin.Context) {
+	pagination := &utils.Pagination{}
+	name := h.ValidateQueryPayments(c, pagination)
+
+	payments, err := h.adminUC.GetPayments(c, name, pagination)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, payments, http.StatusOK)
+}
+
+func (h *adminHandlers) ValidateQueryPayments(c *gin.Context, pagination *utils.Pagination) string {
+	name := strings.TrimSpace(c.Query("name"))
+	sort := strings.TrimSpace(c.Query("sort"))
+	sortBy := strings.TrimSpace(c.Query("sortBy"))
+	limit := strings.TrimSpace(c.Query("limit"))
+	page := strings.TrimSpace(c.Query("page"))
+
+	var sortFilter string
+	var sortByFilter string
+	var limitFilter int
+	var pageFilter int
+
+	switch sort {
+	case "asc":
+		sortFilter = sort
+	default:
+		sortFilter = "desc"
+	}
+
+	switch sortBy {
+	case "payment_amount":
+		sortByFilter = sortBy
+	default:
+		sortByFilter = "payment_date"
+	}
+
+	limitFilter, err := strconv.Atoi(limit)
+	if err != nil || limitFilter < 1 {
+		limitFilter = 10
+	}
+
+	pageFilter, err = strconv.Atoi(page)
+	if err != nil || pageFilter < 1 {
+		pageFilter = 1
+	}
+
+	pagination.Limit = limitFilter
+	pagination.Page = pageFilter
+	pagination.Sort = fmt.Sprintf("%s %s", sortByFilter, sortFilter)
+
+	return name
 }

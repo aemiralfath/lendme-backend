@@ -125,13 +125,13 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 	}
 
 	totalPaid := 0
-	for _, installment := range lending.Installments {
+	for _, installment := range *lending.Installments {
 		if installment.InstallmentStatusID == 2 {
 			totalPaid++
 		}
 	}
 
-	if totalPaid == len(lending.Installments)-1 {
+	if totalPaid == len(*lending.Installments)-1 {
 		lending.LendingStatusID = 4
 	} else {
 		lending.LendingStatusID = 3

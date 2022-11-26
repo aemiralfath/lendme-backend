@@ -37,6 +37,15 @@ func (r *adminRepo) GetLendingByID(ctx context.Context, lendingID string) (*mode
 	return lending, nil
 }
 
+func (r *adminRepo) GetInstallmentByID(ctx context.Context, installmentID string) (*models.Installment, error) {
+	installment := &models.Installment{}
+	if err := r.db.Preload(clause.Associations).WithContext(ctx).Where("installment_id = ?", installmentID).First(installment).Error; err != nil {
+		return installment, err
+	}
+
+	return installment, nil
+}
+
 func (r *adminRepo) GetLendingWithInstallmentByID(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending := &models.Lending{}
 	if err := r.db.Preload("Installments.InstallmentStatus").Preload(clause.Associations).WithContext(ctx).Where("lending_id = ?", lendingID).First(lending).Error; err != nil {
@@ -99,6 +108,19 @@ func (r *adminRepo) UpdateLendingByID(ctx context.Context, lending *models.Lendi
 	return lending, nil
 }
 
+func (r *adminRepo) UpdateInstallmentByID(ctx context.Context, installment *models.Installment) (*models.Installment, error) {
+	if err := r.db.Omit("InstallmentStatus", "Lending").WithContext(ctx).Where("installment_id = ?", installment.InstallmentID).Save(installment).Error; err != nil {
+		return installment, err
+	}
+
+	installment, err := r.GetInstallmentByID(ctx, installment.InstallmentID.String())
+	if err != nil {
+		return installment, err
+	}
+
+	return installment, nil
+}
+
 func (r *adminRepo) CreateInstallments(ctx context.Context, lendingID string, installments []*models.Installment) (*models.Lending, error) {
 	if err := r.db.WithContext(ctx).Create(installments).Error; err != nil {
 		return nil, err
@@ -133,7 +155,7 @@ func (r *adminRepo) GetLoans(ctx context.Context, name string, status []int, pag
 	var loans []*models.Lending
 
 	var totalRows int64
-	r.db.Model(loans).
+	r.db.Model(loans).WithContext(ctx).
 		Where("name ILIKE ? AND lending_status_id in ?", fmt.Sprintf("%%%s%%", name), status).
 		Count(&totalRows)
 
@@ -152,5 +174,36 @@ func (r *adminRepo) GetLoans(ctx context.Context, name string, status []int, pag
 	}
 
 	pagination.Rows = loans
+	return pagination, nil
+}
+
+func (r *adminRepo) GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	var payments []*models.Payment
+
+	var totalRows int64
+	r.db.WithContext(ctx).Model(payments).
+		Joins("inner join installments on installments.installment_id = payments.installment_id").
+		Joins("inner join lendings on installments.lending_id = lendings.lending_id").
+		Where("lendings.name ILIKE ?", fmt.Sprintf("%%%s%%", name)).
+		Count(&totalRows)
+
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = totalPages
+
+	if err := r.db.WithContext(ctx).
+		Joins("inner join installments on installments.installment_id = payments.installment_id").
+		Joins("inner join lendings on installments.lending_id = lendings.lending_id").
+		Where("lendings.name ILIKE ?", fmt.Sprintf("%%%s%%", name)).
+		Preload("Voucher").
+		Preload("Installment").
+		Preload("Installment.Lending").
+		Preload("Installment.InstallmentStatus").
+		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort()).
+		Find(&payments).Error; err != nil {
+		return pagination, err
+	}
+
+	pagination.Rows = payments
 	return pagination, nil
 }

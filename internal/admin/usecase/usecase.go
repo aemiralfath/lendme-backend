@@ -120,12 +120,39 @@ func (u *adminUC) UpdateDebtorByID(ctx context.Context, body body.UpdateContract
 	return debtor, nil
 }
 
+func (u *adminUC) UpdateInstallmentByID(ctx context.Context, body body.UpdateInstallmentRequest) (*models.Installment, error) {
+	installment, err := u.adminRepo.GetInstallmentByID(ctx, body.InstallmentID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return installment, httperror.New(http.StatusBadRequest, response.InstallmentNotExist)
+		}
+		return installment, err
+	}
+
+	installment.DueDate = body.DueDateTime
+	installment, err = u.adminRepo.UpdateInstallmentByID(ctx, installment)
+	if err != nil {
+		return installment, err
+	}
+
+	return installment, nil
+}
+
 func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
 	loans, err := u.adminRepo.GetLoans(ctx, name, status, pagination)
 	if err != nil {
 		return nil, err
 	}
 	return loans, nil
+}
+
+func (u *adminUC) GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	payments, err := u.adminRepo.GetPayments(ctx, name, pagination)
+	if err != nil {
+		return payments, err
+	}
+
+	return payments, nil
 }
 
 func (u *adminUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
