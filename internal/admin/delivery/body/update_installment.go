@@ -9,24 +9,16 @@ import (
 )
 
 type UpdateInstallmentRequest struct {
-	InstallmentID string    `json:"installment_id"`
-	DueDate       string    `json:"due_date"`
-	DueDateTime   time.Time `json:"-"`
+	DueDate     string    `json:"due_date"`
+	DueDateTime time.Time `json:"-"`
 }
 
 func (r *UpdateInstallmentRequest) Validate() (UnprocessableEntity, error) {
 	unprocessableEntity := false
 	entity := UnprocessableEntity{
 		Fields: map[string]string{
-			"installment_id": "",
-			"due_date":       "",
+			"due_date": "",
 		},
-	}
-
-	r.InstallmentID = strings.TrimSpace(r.InstallmentID)
-	if r.InstallmentID == "" {
-		unprocessableEntity = true
-		entity.Fields["installment_id"] = InvalidInstallmentIDFormatMessage
 	}
 
 	loc, _ := time.LoadLocation("Asia/Jakarta")

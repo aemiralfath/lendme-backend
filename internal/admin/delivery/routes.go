@@ -11,10 +11,11 @@ func MapAdminRoutes(adminGroup *gin.RouterGroup, h admin.Handlers, mw *middlewar
 	adminGroup.Use(mw.AdminMiddleware())
 	adminGroup.GET("/debtors", h.GetDebtors)
 	adminGroup.GET("/debtors/:id", h.GetDebtorByID)
-	adminGroup.PUT("/debtors", h.UpdateDebtorByID)
+	adminGroup.PUT("/debtors/:id", h.UpdateDebtorByID)
 	adminGroup.GET("/loans", h.GetLoans)
 	adminGroup.GET("/loans/:id", h.GetLoanByID)
 	adminGroup.PUT("/loans/:id", h.ApproveLoan)
-	adminGroup.PUT("/loans/installment", h.UpdateInstallment)
+	adminGroup.GET("/loans/installment/:id", h.GetInstallmentByID)
+	adminGroup.PUT("/loans/installment/:id", h.UpdateInstallmentByID)
 	adminGroup.GET("/payments", h.GetPayments)
 }

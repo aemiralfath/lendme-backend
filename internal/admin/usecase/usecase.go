@@ -42,6 +42,15 @@ func (u *adminUC) GetDebtorByID(ctx context.Context, id string) (*models.Debtor,
 	return debtor, nil
 }
 
+func (u *adminUC) GetInstallmentByID(ctx context.Context, id string) (*models.Installment, error) {
+	installment, err := u.adminRepo.GetInstallmentByID(ctx, id)
+	if err != nil {
+		return installment, err
+	}
+
+	return installment, nil
+}
+
 func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending, err := u.adminRepo.GetLendingByID(ctx, lendingID)
 	if err != nil {
@@ -84,8 +93,8 @@ func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Le
 	return lending, nil
 }
 
-func (u *adminUC) UpdateDebtorByID(ctx context.Context, body body.UpdateContractRequest) (*models.Debtor, error) {
-	debtor, err := u.adminRepo.GetDebtorByID(ctx, body.DebtorID)
+func (u *adminUC) UpdateDebtorByID(ctx context.Context, debtorID string, body body.UpdateContractRequest) (*models.Debtor, error) {
+	debtor, err := u.adminRepo.GetDebtorByID(ctx, debtorID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return debtor, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
@@ -120,8 +129,8 @@ func (u *adminUC) UpdateDebtorByID(ctx context.Context, body body.UpdateContract
 	return debtor, nil
 }
 
-func (u *adminUC) UpdateInstallmentByID(ctx context.Context, body body.UpdateInstallmentRequest) (*models.Installment, error) {
-	installment, err := u.adminRepo.GetInstallmentByID(ctx, body.InstallmentID)
+func (u *adminUC) UpdateInstallmentByID(ctx context.Context, installmentID string, body body.UpdateInstallmentRequest) (*models.Installment, error) {
+	installment, err := u.adminRepo.GetInstallmentByID(ctx, installmentID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return installment, httperror.New(http.StatusBadRequest, response.InstallmentNotExist)

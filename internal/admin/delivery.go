@@ -9,6 +9,7 @@ type Handlers interface {
 	GetLoanByID(c *gin.Context)
 	ApproveLoan(c *gin.Context)
 	GetPayments(c *gin.Context)
-	UpdateInstallment(c *gin.Context)
+	GetInstallmentByID(c *gin.Context)
+	UpdateInstallmentByID(c *gin.Context)
 	UpdateDebtorByID(c *gin.Context)
 }

@@ -15,7 +15,7 @@ type Debtor struct {
 	TotalDelay         int                   `json:"total_delay" db:"total_delay" binding:"omitempty"`
 	CreatedAt          time.Time             `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt          time.Time             `json:"updated_at,omitempty" db:"updated_at"`
-	User               User                  `json:"user,omitempty" gorm:"foreignKey:UserID;references:UserID"`
+	User               *User                 `json:"user,omitempty" gorm:"foreignKey:UserID;references:UserID"`
 	CreditHealth       *CreditHealthType     `json:"credit_health,omitempty" gorm:"foreignKey:CreditHealthID;references:CreditHealthID"`
 	ContractTracking   *ContractTrackingType `json:"contract_tracking,omitempty" gorm:"foreignKey:ContractTrackingID;references:ContractTrackingID"`
 }

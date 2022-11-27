@@ -12,7 +12,7 @@ type Payment struct {
 	PaymentFine     float64      `json:"payment_fine" db:"payment_fine" binding:"omitempty"`
 	PaymentDiscount float64      `json:"payment_discount" db:"payment_discount" binding:"omitempty"`
 	PaymentAmount   float64      `json:"payment_amount" db:"payment_amount" binding:"omitempty"`
-	PaymentDate     *time.Time   `json:"payment_date" db:"payment_date" binding:"omitempty"`
+	PaymentDate     time.Time    `json:"payment_date" db:"payment_date" binding:"omitempty"`
 	Installment     *Installment `json:"installment,omitempty" gorm:"foreignKey:InstallmentID;references:InstallmentID"`
 	Voucher         *Voucher     `json:"voucher,omitempty" gorm:"foreignKey:VoucherID;references:VoucherID"`
 }

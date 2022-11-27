@@ -135,7 +135,7 @@ func (r *userRepo) CreatePayment(ctx context.Context, payment *models.Payment) (
 }
 
 func (r *userRepo) UpdateInstallment(ctx context.Context, installment *models.Installment) (*models.Installment, error) {
-	if err := r.db.Omit("InstallmentStatus").WithContext(ctx).Where("installment_id = ?", installment.InstallmentID).Save(installment).Error; err != nil {
+	if err := r.db.Omit("InstallmentStatus", "Lending").WithContext(ctx).Where("installment_id = ?", installment.InstallmentID).Save(installment).Error; err != nil {
 		return installment, err
 	}
 

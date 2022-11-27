@@ -80,6 +80,7 @@ func (h *adminHandlers) ApproveLoan(c *gin.Context) {
 }
 
 func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
+	id := c.Param("id")
 	var requestBody body.UpdateContractRequest
 	if err := c.ShouldBind(&requestBody); err != nil {
 		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
@@ -92,7 +93,7 @@ func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
 		return
 	}
 
-	debtor, err := h.adminUC.UpdateDebtorByID(c, requestBody)
+	debtor, err := h.adminUC.UpdateDebtorByID(c, id, requestBody)
 	if err != nil {
 		var e *httperror.Error
 		if !errors.As(err, &e) {
@@ -108,9 +109,27 @@ func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
 	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
 }
 
-func (h *adminHandlers) UpdateInstallment(c *gin.Context) {
-	var requestBody body.UpdateInstallmentRequest
+func (h *adminHandlers) GetInstallmentByID(c *gin.Context) {
+	id := c.Param("id")
+	installment, err := h.adminUC.GetInstallmentByID(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
 
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, installment, http.StatusOK)
+}
+
+func (h *adminHandlers) UpdateInstallmentByID(c *gin.Context) {
+	id := c.Param("id")
+	var requestBody body.UpdateInstallmentRequest
 	if err := c.ShouldBind(&requestBody); err != nil {
 		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
 		return
@@ -122,7 +141,7 @@ func (h *adminHandlers) UpdateInstallment(c *gin.Context) {
 		return
 	}
 
-	installment, err := h.adminUC.UpdateInstallmentByID(c, requestBody)
+	installment, err := h.adminUC.UpdateInstallmentByID(c, id, requestBody)
 	if err != nil {
 		var e *httperror.Error
 		if !errors.As(err, &e) {

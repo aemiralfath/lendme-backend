@@ -37,7 +37,6 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 	payment := &models.Payment{}
 
 	loc, _ := time.LoadLocation("Asia/Jakarta")
-
 	timeNow := time.Now().In(loc)
 
 	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
@@ -92,6 +91,7 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 	}
 
 	payment.InstallmentID = installment.InstallmentID
+	payment.PaymentDate = timeNow
 	payment.PaymentFine = float64(5000 * delay)
 	payment.PaymentAmount = installment.Amount - payment.PaymentDiscount + payment.PaymentFine
 	if err := payment.PrepareCreate(); err != nil {
