@@ -213,7 +213,8 @@ func (r *adminRepo) GetVouchers(ctx context.Context, name string, pagination *ut
 		return nil, err
 	}
 
-	timeNow := time.Now()
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+	timeNow := time.Now().In(loc)
 	for _, voucher := range vouchers {
 		if timeNow.Sub(voucher.ExpireDate) > 0 {
 			if err := r.DeleteVoucher(ctx, voucher); err != nil {

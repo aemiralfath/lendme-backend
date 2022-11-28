@@ -36,6 +36,9 @@ func (u *adminUC) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
 func (u *adminUC) GetDebtorByID(ctx context.Context, id string) (*models.Debtor, error) {
 	debtor, err := u.adminRepo.GetDebtorByID(ctx, id)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return debtor, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
 		return debtor, err
 	}
 
@@ -45,6 +48,9 @@ func (u *adminUC) GetDebtorByID(ctx context.Context, id string) (*models.Debtor,
 func (u *adminUC) GetInstallmentByID(ctx context.Context, id string) (*models.Installment, error) {
 	installment, err := u.adminRepo.GetInstallmentByID(ctx, id)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return installment, httperror.New(http.StatusBadRequest, response.InstallmentNotExist)
+		}
 		return installment, err
 	}
 

@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"math"
+	"time"
 )
 
 type userRepo struct {
@@ -169,4 +170,41 @@ func (r *userRepo) DeleteVoucher(ctx context.Context, voucher *models.Voucher) e
 	}
 
 	return nil
+}
+
+func (r *userRepo) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	var rows []*models.Voucher
+	var vouchers []*models.Voucher
+
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+	timeNow := time.Now().In(loc)
+
+	var totalRows int64
+	r.db.Model(vouchers).WithContext(ctx).
+		Where("name ILIKE ? AND (? BETWEEN active_date AND expire_date)", fmt.Sprintf("%%%s%%", name), timeNow).
+		Count(&totalRows)
+
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = totalPages
+
+	if err := r.db.WithContext(ctx).
+		Where("name ILIKE ? AND (? BETWEEN active_date AND expire_date)", fmt.Sprintf("%%%s%%", name), timeNow).
+		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort()).
+		Find(&vouchers).Error; err != nil {
+		return nil, err
+	}
+
+	for _, voucher := range vouchers {
+		if timeNow.Sub(voucher.ExpireDate) > 0 {
+			if err := r.DeleteVoucher(ctx, voucher); err != nil {
+				return nil, err
+			}
+		} else {
+			rows = append(rows, voucher)
+		}
+	}
+
+	pagination.Rows = rows
+	return pagination, nil
 }

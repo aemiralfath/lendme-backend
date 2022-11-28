@@ -32,6 +32,18 @@ func (u *userUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Len
 	return lending, nil
 }
 
+func (u *userUC) GetInstallmentByID(ctx context.Context, id string) (*models.Installment, error) {
+	installment, err := u.userRepo.GetInstallmentByID(ctx, id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return installment, httperror.New(http.StatusBadRequest, response.InstallmentNotExist)
+		}
+		return installment, err
+	}
+
+	return installment, nil
+}
+
 func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.CreatePayment) (*models.Payment, error) {
 	delay := 0
 	payment := &models.Payment{}
@@ -257,4 +269,13 @@ func (u *userUC) GetLoans(ctx context.Context, userID, name string, status []int
 		return nil, err
 	}
 	return loans, nil
+}
+
+func (u *userUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	vouchers, err := u.userRepo.GetVouchers(ctx, name, pagination)
+	if err != nil {
+		return vouchers, err
+	}
+
+	return vouchers, nil
 }
