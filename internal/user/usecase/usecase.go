@@ -68,6 +68,7 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 		return payment, httperror.New(http.StatusBadRequest, response.InstallmentAlreadyPaid)
 	}
 
+	payment.VoucherID = nil
 	voucher := &models.Voucher{}
 	if body.VoucherID != "" {
 		voucher, err = u.userRepo.GetVoucherByID(ctx, body.VoucherID)
@@ -77,17 +78,18 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 			}
 			return payment, err
 		}
+
+		if voucher.DiscountQuota > 0 && (timeNow.Sub(voucher.ActiveDate).Seconds() >= 0 && timeNow.Sub(voucher.ExpireDate).Seconds() <= 0) {
+			payment.VoucherID = &voucher.VoucherID
+			payment.PaymentDiscount = installment.Amount * float64(voucher.DiscountPayment) / 100.0
+		} else {
+			return payment, httperror.New(http.StatusBadRequest, response.VoucherNotExist)
+		}
 	}
 
 	delayTime := timeNow.Sub(installment.DueDate)
 	if delayTime.Seconds() > 0 {
 		delay = int(delayTime.Hours()/24) + 1
-	}
-
-	payment.VoucherID = nil
-	if voucher.DiscountQuota > 0 && (timeNow.Sub(voucher.ActiveDate).Seconds() >= 0 && timeNow.Sub(voucher.ExpireDate).Seconds() <= 0) {
-		payment.VoucherID = &voucher.VoucherID
-		payment.PaymentDiscount = installment.Amount * float64(voucher.DiscountPayment/100.0)
 	}
 
 	payment.InstallmentID = installment.InstallmentID
@@ -101,6 +103,19 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 	payment, err = u.userRepo.CreatePayment(ctx, payment)
 	if err != nil {
 		return payment, err
+	}
+
+	if body.VoucherID != "" {
+		voucher.DiscountQuota -= 1
+		if err := u.userRepo.UpdateVoucher(ctx, voucher); err != nil {
+			return payment, err
+		}
+
+		if voucher.DiscountQuota <= 0 {
+			if err := u.userRepo.DeleteVoucher(ctx, voucher); err != nil {
+				return payment, err
+			}
+		}
 	}
 
 	debtor.CreditUsed = debtor.CreditUsed - installment.Amount

@@ -130,7 +130,8 @@ CREATE TABLE "vouchers"
     "active_date"      timestamptz      NOT NULL,
     "expire_date"      timestamptz      NOT NULL,
     "created_at"       timestamptz      NOT NULL DEFAULT (NOW()),
-    "updated_at"       timestamptz
+    "updated_at"       timestamptz,
+    "deleted_at"       timestamptz
 );
 
 ALTER TABLE "debtors"

@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error)
 	GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
+	GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
 	GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error)
 	GetDebtors(ctx context.Context) ([]*models.Debtor, error)
 	GetDebtorByID(ctx context.Context, debtorID string) (*models.Debtor, error)
@@ -22,4 +23,5 @@ type Repository interface {
 	UpdateLendingByID(ctx context.Context, lending *models.Lending) (*models.Lending, error)
 	UpdateInstallmentByID(ctx context.Context, installment *models.Installment) (*models.Installment, error)
 	CreateVoucher(ctx context.Context, voucher *models.Voucher) (*models.Voucher, error)
+	DeleteVoucher(ctx context.Context, voucher *models.Voucher) error
 }

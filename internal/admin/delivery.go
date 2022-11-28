@@ -13,4 +13,5 @@ type Handlers interface {
 	UpdateInstallmentByID(c *gin.Context)
 	UpdateDebtorByID(c *gin.Context)
 	CreateVoucher(c *gin.Context)
+	GetVouchers(c *gin.Context)
 }

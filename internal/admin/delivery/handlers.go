@@ -338,3 +338,70 @@ func (h *adminHandlers) ValidateQueryPayments(c *gin.Context, pagination *utils.
 
 	return name
 }
+
+func (h *adminHandlers) GetVouchers(c *gin.Context) {
+	pagination := &utils.Pagination{}
+	name := h.ValidateQueryVouchers(c, pagination)
+
+	vouchers, err := h.adminUC.GetVouchers(c, name, pagination)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, vouchers, http.StatusOK)
+}
+
+func (h *adminHandlers) ValidateQueryVouchers(c *gin.Context, pagination *utils.Pagination) string {
+	name := strings.TrimSpace(c.Query("name"))
+	sort := strings.TrimSpace(c.Query("sort"))
+	sortBy := strings.TrimSpace(c.Query("sortBy"))
+	limit := strings.TrimSpace(c.Query("limit"))
+	page := strings.TrimSpace(c.Query("page"))
+
+	var sortFilter string
+	var sortByFilter string
+	var limitFilter int
+	var pageFilter int
+
+	switch sort {
+	case "asc":
+		sortFilter = sort
+	default:
+		sortFilter = "desc"
+	}
+
+	switch sortBy {
+	case "expire_date":
+		sortByFilter = sortBy
+	case "discount_payment":
+		sortByFilter = sortBy
+	case "discount_quota":
+		sortByFilter = sortBy
+	default:
+		sortByFilter = "active_date"
+	}
+
+	limitFilter, err := strconv.Atoi(limit)
+	if err != nil || limitFilter < 1 {
+		limitFilter = 10
+	}
+
+	pageFilter, err = strconv.Atoi(page)
+	if err != nil || pageFilter < 1 {
+		pageFilter = 1
+	}
+
+	pagination.Limit = limitFilter
+	pagination.Page = pageFilter
+	pagination.Sort = fmt.Sprintf("%s %s", sortByFilter, sortFilter)
+
+	return name
+}

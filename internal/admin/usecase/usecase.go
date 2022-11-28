@@ -184,6 +184,15 @@ func (u *adminUC) GetPayments(ctx context.Context, name string, pagination *util
 	return payments, nil
 }
 
+func (u *adminUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	vouchers, err := u.adminRepo.GetVouchers(ctx, name, pagination)
+	if err != nil {
+		return vouchers, err
+	}
+
+	return vouchers, nil
+}
+
 func (u *adminUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending, err := u.adminRepo.GetLoanByID(ctx, lendingID)
 	if err != nil {

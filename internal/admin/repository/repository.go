@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"math"
+	"time"
 )
 
 type adminRepo struct {
@@ -142,6 +143,14 @@ func (r *adminRepo) CreateVoucher(ctx context.Context, voucher *models.Voucher) 
 	return voucher, nil
 }
 
+func (r *adminRepo) DeleteVoucher(ctx context.Context, voucher *models.Voucher) error {
+	if err := r.db.WithContext(ctx).Where("voucher_id = ?", voucher.VoucherID).Delete(voucher).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *adminRepo) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending := &models.Lending{}
 	if err := r.db.WithContext(ctx).
@@ -182,6 +191,40 @@ func (r *adminRepo) GetLoans(ctx context.Context, name string, status []int, pag
 	}
 
 	pagination.Rows = loans
+	return pagination, nil
+}
+
+func (r *adminRepo) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	var rows []*models.Voucher
+	var vouchers []*models.Voucher
+
+	var totalRows int64
+	r.db.Model(vouchers).WithContext(ctx).
+		Where("name ILIKE ?", fmt.Sprintf("%%%s%%", name)).
+		Count(&totalRows)
+
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = totalPages
+
+	if err := r.db.WithContext(ctx).Where("name ILIKE ?", fmt.Sprintf("%%%s%%", name)).
+		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort()).
+		Find(&vouchers).Error; err != nil {
+		return nil, err
+	}
+
+	timeNow := time.Now()
+	for _, voucher := range vouchers {
+		if timeNow.Sub(voucher.ExpireDate) > 0 {
+			if err := r.DeleteVoucher(ctx, voucher); err != nil {
+				return nil, err
+			}
+		} else {
+			rows = append(rows, voucher)
+		}
+	}
+
+	pagination.Rows = rows
 	return pagination, nil
 }
 

@@ -18,4 +18,6 @@ type Repository interface {
 	CreatePayment(ctx context.Context, payment *models.Payment) (*models.Payment, error)
 	UpdateInstallment(ctx context.Context, installment *models.Installment) (*models.Installment, error)
 	UpdateLending(ctx context.Context, lending *models.Lending) (*models.Lending, error)
+	UpdateVoucher(ctx context.Context, voucher *models.Voucher) error
+	DeleteVoucher(ctx context.Context, voucher *models.Voucher) error
 }

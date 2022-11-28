@@ -154,3 +154,19 @@ func (r *userRepo) UpdateLending(ctx context.Context, lending *models.Lending) (
 
 	return lending, nil
 }
+
+func (r *userRepo) UpdateVoucher(ctx context.Context, voucher *models.Voucher) error {
+	if err := r.db.WithContext(ctx).Where("voucher_id = ?", voucher.VoucherID).Save(voucher).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *userRepo) DeleteVoucher(ctx context.Context, voucher *models.Voucher) error {
+	if err := r.db.WithContext(ctx).Where("voucher_id = ?", voucher.VoucherID).Delete(voucher).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
