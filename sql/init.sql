@@ -124,6 +124,7 @@ CREATE TABLE "payments"
 CREATE TABLE "vouchers"
 (
     "voucher_id"       UUID PRIMARY KEY NOT NULL,
+    "name"             VARCHAR          NOT NULL,
     "discount_payment" int              NOT NULL,
     "discount_quota"   int              NOT NULL,
     "active_date"      timestamptz      NOT NULL,

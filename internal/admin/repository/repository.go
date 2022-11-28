@@ -134,6 +134,14 @@ func (r *adminRepo) CreateInstallments(ctx context.Context, lendingID string, in
 	return lending, nil
 }
 
+func (r *adminRepo) CreateVoucher(ctx context.Context, voucher *models.Voucher) (*models.Voucher, error) {
+	if err := r.db.WithContext(ctx).Create(voucher).Error; err != nil {
+		return nil, err
+	}
+
+	return voucher, nil
+}
+
 func (r *adminRepo) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending := &models.Lending{}
 	if err := r.db.WithContext(ctx).

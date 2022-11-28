@@ -129,6 +129,26 @@ func (u *adminUC) UpdateDebtorByID(ctx context.Context, debtorID string, body bo
 	return debtor, nil
 }
 
+func (u *adminUC) CreateVoucher(ctx context.Context, body body.CreateVoucherRequest) (*models.Voucher, error) {
+	voucher := &models.Voucher{}
+	voucher.Name = body.Name
+	voucher.DiscountPayment = body.DiscountPayment
+	voucher.DiscountQuota = body.DiscountQuota
+	voucher.ActiveDate = body.ActiveDateTime
+	voucher.ExpireDate = body.ExpireDateTime
+
+	if err := voucher.PrepareCreate(); err != nil {
+		return voucher, err
+	}
+
+	voucher, err := u.adminRepo.CreateVoucher(ctx, voucher)
+	if err != nil {
+		return voucher, err
+	}
+
+	return voucher, nil
+}
+
 func (u *adminUC) UpdateInstallmentByID(ctx context.Context, installmentID string, body body.UpdateInstallmentRequest) (*models.Installment, error) {
 	installment, err := u.adminRepo.GetInstallmentByID(ctx, installmentID)
 	if err != nil {

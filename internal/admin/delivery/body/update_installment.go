@@ -26,7 +26,7 @@ func (r *UpdateInstallmentRequest) Validate() (UnprocessableEntity, error) {
 	t, err := time.ParseInLocation("02-01-2006 15:04:05", r.DueDate, loc)
 	if err != nil {
 		unprocessableEntity = true
-		entity.Fields["due_date"] = InvalidDueDateFormatMessage
+		entity.Fields["due_date"] = InvalidDateFormatMessage
 	}
 
 	r.DueDateTime = t

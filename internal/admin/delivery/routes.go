@@ -18,4 +18,5 @@ func MapAdminRoutes(adminGroup *gin.RouterGroup, h admin.Handlers, mw *middlewar
 	adminGroup.GET("/loans/installment/:id", h.GetInstallmentByID)
 	adminGroup.PUT("/loans/installment/:id", h.UpdateInstallmentByID)
 	adminGroup.GET("/payments", h.GetPayments)
+	adminGroup.POST("/vouchers", h.CreateVoucher)
 }

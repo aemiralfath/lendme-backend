@@ -21,4 +21,5 @@ type Repository interface {
 	UpdateDebtorByID(ctx context.Context, debtor *models.Debtor) (*models.Debtor, error)
 	UpdateLendingByID(ctx context.Context, lending *models.Lending) (*models.Lending, error)
 	UpdateInstallmentByID(ctx context.Context, installment *models.Installment) (*models.Installment, error)
+	CreateVoucher(ctx context.Context, voucher *models.Voucher) (*models.Voucher, error)
 }
