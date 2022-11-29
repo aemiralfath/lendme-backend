@@ -132,12 +132,21 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 
 	debtor.CreditUsed = debtor.CreditUsed - installment.Amount
 	debtor.TotalDelay = debtor.TotalDelay + delay
+	if delay == 0 {
+		if debtor.TotalDelay-10 < 0 {
+			debtor.TotalDelay = 0
+		} else {
+			debtor.TotalDelay = debtor.TotalDelay - 10
+		}
+	}
 
 	switch {
 	case debtor.TotalDelay > 20:
 		debtor.CreditHealthID = 3
 	case debtor.TotalDelay > 10:
 		debtor.CreditHealthID = 2
+	default:
+		debtor.CreditHealthID = 1
 	}
 
 	debtor, err = u.userRepo.UpdateDebtorByID(ctx, debtor)

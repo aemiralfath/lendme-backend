@@ -23,6 +23,7 @@ func GenerateJWTToken(userID string, userRole int, config *config.Config) (strin
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(config.Server.JwtExpMin) * time.Minute).Unix(),
 			Issuer:    config.Server.JwtIssuer,
+			IssuedAt:  time.Now().Unix(),
 		},
 	}
 
