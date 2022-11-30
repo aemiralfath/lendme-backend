@@ -10,6 +10,7 @@ import (
 	"final-project-backend/pkg/response"
 	"final-project-backend/pkg/utils"
 	"gorm.io/gorm"
+	"math"
 	"net/http"
 	"time"
 )
@@ -93,7 +94,7 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 
 		if voucher.DiscountQuota > 0 && (timeNow.Sub(voucher.ActiveDate).Seconds() >= 0 && timeNow.Sub(voucher.ExpireDate).Seconds() <= 0) {
 			payment.VoucherID = &voucher.VoucherID
-			payment.PaymentDiscount = installment.Amount * float64(voucher.DiscountPayment) / 100.0
+			payment.PaymentDiscount = math.Floor(installment.Amount * (float64(voucher.DiscountPayment) / 100.0))
 		} else {
 			return payment, httperror.New(http.StatusBadRequest, response.VoucherNotExist)
 		}
@@ -130,7 +131,12 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 		}
 	}
 
-	debtor.CreditUsed = debtor.CreditUsed - installment.Amount
+	if debtor.CreditUsed-installment.Amount < 0 {
+		debtor.CreditUsed = 0
+	} else {
+		debtor.CreditUsed = debtor.CreditUsed - installment.Amount
+	}
+
 	debtor.TotalDelay = debtor.TotalDelay + delay
 	if delay == 0 {
 		if debtor.TotalDelay-10 < 0 {
@@ -287,4 +293,18 @@ func (u *userUC) GetVouchers(ctx context.Context, name string, pagination *utils
 	}
 
 	return vouchers, nil
+}
+
+func (u *userUC) GetPayments(ctx context.Context, userID, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	payments, err := u.userRepo.GetPayments(ctx, debtor.DebtorID.String(), name, pagination)
+	if err != nil {
+		return payments, err
+	}
+
+	return payments, nil
 }

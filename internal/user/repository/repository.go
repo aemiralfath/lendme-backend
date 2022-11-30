@@ -208,3 +208,34 @@ func (r *userRepo) GetVouchers(ctx context.Context, name string, pagination *uti
 	pagination.Rows = rows
 	return pagination, nil
 }
+
+func (r *userRepo) GetPayments(ctx context.Context, debtorID string, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	var payments []*models.Payment
+
+	var totalRows int64
+	r.db.WithContext(ctx).Model(payments).
+		Joins("inner join installments on installments.installment_id = payments.installment_id").
+		Joins("inner join lendings on installments.lending_id = lendings.lending_id").
+		Where("lendings.name ILIKE ? AND lendings.debtor_id = ?", fmt.Sprintf("%%%s%%", name), debtorID).
+		Count(&totalRows)
+
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = totalPages
+
+	if err := r.db.WithContext(ctx).
+		Joins("inner join installments on installments.installment_id = payments.installment_id").
+		Joins("inner join lendings on installments.lending_id = lendings.lending_id").
+		Where("lendings.name ILIKE ? AND lendings.debtor_id = ?", fmt.Sprintf("%%%s%%", name), debtorID).
+		Preload("Voucher").
+		Preload("Installment").
+		Preload("Installment.Lending").
+		Preload("Installment.InstallmentStatus").
+		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort()).
+		Find(&payments).Error; err != nil {
+		return pagination, err
+	}
+
+	pagination.Rows = payments
+	return pagination, nil
+}

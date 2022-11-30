@@ -322,3 +322,72 @@ func (h *userHandlers) ValidateQueryVouchers(c *gin.Context, pagination *utils.P
 
 	return name
 }
+
+func (h *userHandlers) GetPayments(c *gin.Context) {
+	userID, exist := c.Get("userID")
+	if !exist {
+		response.ErrorResponse(c.Writer, response.UnauthorizedMessage, http.StatusUnauthorized)
+		return
+	}
+
+	pagination := &utils.Pagination{}
+	name := h.ValidateQueryPayments(c, pagination)
+
+	payments, err := h.userUC.GetPayments(c, userID.(string), name, pagination)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, payments, http.StatusOK)
+}
+
+func (h *userHandlers) ValidateQueryPayments(c *gin.Context, pagination *utils.Pagination) string {
+	name := strings.TrimSpace(c.Query("name"))
+	sort := strings.TrimSpace(c.Query("sort"))
+	sortBy := strings.TrimSpace(c.Query("sortBy"))
+	limit := strings.TrimSpace(c.Query("limit"))
+	page := strings.TrimSpace(c.Query("page"))
+
+	var sortFilter string
+	var sortByFilter string
+	var limitFilter int
+	var pageFilter int
+
+	switch sort {
+	case "asc":
+		sortFilter = sort
+	default:
+		sortFilter = "desc"
+	}
+
+	switch sortBy {
+	case "payment_amount":
+		sortByFilter = sortBy
+	default:
+		sortByFilter = "payment_date"
+	}
+
+	limitFilter, err := strconv.Atoi(limit)
+	if err != nil || limitFilter < 1 {
+		limitFilter = 10
+	}
+
+	pageFilter, err = strconv.Atoi(page)
+	if err != nil || pageFilter < 1 {
+		pageFilter = 1
+	}
+
+	pagination.Limit = limitFilter
+	pagination.Page = pageFilter
+	pagination.Sort = fmt.Sprintf("%s %s", sortByFilter, sortFilter)
+
+	return name
+}

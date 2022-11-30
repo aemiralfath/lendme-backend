@@ -16,4 +16,5 @@ type UseCase interface {
 	GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error)
 	GetInstallmentByID(ctx context.Context, installmentID string) (*models.Installment, error)
 	CreatePayment(ctx context.Context, userID string, body body.CreatePayment) (*models.Payment, error)
+	GetPayments(ctx context.Context, userID string, name string, pagination *utils.Pagination) (*utils.Pagination, error)
 }

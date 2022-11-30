@@ -11,4 +11,5 @@ type Handlers interface {
 	CreatePayment(c *gin.Context)
 	GetInstallmentByID(c *gin.Context)
 	GetVouchers(c *gin.Context)
+	GetPayments(c *gin.Context)
 }

@@ -73,7 +73,7 @@ func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Le
 	}
 
 	var installments []*models.Installment
-	installmentAmount := math.Round(lending.Amount / float64(lending.LoanPeriod.Duration))
+	installmentAmount := math.Ceil(lending.Amount / float64(lending.LoanPeriod.Duration))
 
 	loc, _ := time.LoadLocation("Asia/Jakarta")
 	for i := 0; i < lending.LoanPeriod.Duration; i++ {
