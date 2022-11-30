@@ -18,4 +18,5 @@ func MapUserRoutes(userGroup *gin.RouterGroup, h user.Handlers, mw *middleware.M
 	userGroup.POST("/loans/payment", h.CreatePayment)
 	userGroup.GET("/vouchers", h.GetVouchers)
 	userGroup.GET("/payments", h.GetPayments)
+	userGroup.PUT("/profile", h.UpdateUser)
 }

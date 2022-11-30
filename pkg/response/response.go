@@ -14,8 +14,9 @@ const (
 	UnauthorizedMessage        = "Unauthorized"
 	ForbiddenMessage           = "Forbidden"
 
-	AuthEmailAlreadyExistMessage       = "Email already exist."
+	EmailAlreadyExistMessage           = "Email already exist."
 	DebtorIDNotExist                   = "Debtor ID not exist."
+	UserIDNotExist                     = "User ID not exist."
 	LendingIDNotExist                  = "Lending ID not exist."
 	ContractIDNotExist                 = "Contract ID not exist."
 	ContractNotAccepted                = "Contract not accepted."

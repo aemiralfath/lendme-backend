@@ -172,6 +172,31 @@ func (r *userRepo) DeleteVoucher(ctx context.Context, voucher *models.Voucher) e
 	return nil
 }
 
+func (r *userRepo) UpdateUser(ctx context.Context, user *models.User) (*models.User, error) {
+	if err := r.db.WithContext(ctx).Omit("Role").Where("user_id = ?", user.UserID).Save(user).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (r *userRepo) CheckEmailExist(ctx context.Context, email string) (*models.User, error) {
+	foundUser := &models.User{}
+	if err := r.db.WithContext(ctx).Where("email ilike ?", email).First(foundUser).Error; err != nil {
+		return foundUser, err
+	}
+	return foundUser, nil
+}
+
+func (r *userRepo) GetUserDetailsByID(ctx context.Context, userId string) (*models.User, error) {
+	user := &models.User{}
+	if err := r.db.Preload("Role").WithContext(ctx).Where("user_id = ?", userId).First(user).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
 func (r *userRepo) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
 	var rows []*models.Voucher
 	var vouchers []*models.Voucher

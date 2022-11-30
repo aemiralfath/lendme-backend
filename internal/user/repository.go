@@ -22,4 +22,7 @@ type Repository interface {
 	UpdateLending(ctx context.Context, lending *models.Lending) (*models.Lending, error)
 	UpdateVoucher(ctx context.Context, voucher *models.Voucher) error
 	DeleteVoucher(ctx context.Context, voucher *models.Voucher) error
+	CheckEmailExist(ctx context.Context, email string) (*models.User, error)
+	GetUserDetailsByID(ctx context.Context, userId string) (*models.User, error)
+	UpdateUser(ctx context.Context, user *models.User) (*models.User, error)
 }

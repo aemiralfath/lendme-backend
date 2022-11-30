@@ -24,12 +24,14 @@ func NewAuthUseCase(cfg *config.Config, authRepo auth.Repository) auth.UseCase {
 func (u *authUC) Register(ctx context.Context, body body.RegisterRequest) (*models.User, error) {
 	user := &models.User{}
 	user.Name = body.Name
+	user.PhoneNumber = body.PhoneNumber
+	user.Address = body.Address
 	user.Email = body.Email
 	user.Password = body.Password
 
 	existsUser, err := u.authRepo.CheckEmailExist(ctx, user)
 	if existsUser.Email != "" {
-		return nil, httperror.New(http.StatusBadRequest, response.AuthEmailAlreadyExistMessage)
+		return nil, httperror.New(http.StatusBadRequest, response.EmailAlreadyExistMessage)
 	}
 
 	if err = user.PrepareCreate(2); err != nil {

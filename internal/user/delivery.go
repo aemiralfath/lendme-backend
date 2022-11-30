@@ -12,4 +12,5 @@ type Handlers interface {
 	GetInstallmentByID(c *gin.Context)
 	GetVouchers(c *gin.Context)
 	GetPayments(c *gin.Context)
+	UpdateUser(c *gin.Context)
 }

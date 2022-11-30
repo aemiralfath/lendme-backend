@@ -16,13 +16,15 @@ DROP TABLE IF EXISTS vouchers CASCADE;
 
 CREATE TABLE "users"
 (
-    "user_id"    UUID PRIMARY KEY NOT NULL,
-    "role_id"    int              NOT NULL,
-    "name"       VARCHAR          NOT NULL,
-    "email"      VARCHAR UNIQUE   NOT NULL,
-    "password"   VARCHAR          NOT NULL,
-    "created_at" timestamptz      NOT NULL DEFAULT (NOW()),
-    "updated_at" timestamptz
+    "user_id"      UUID PRIMARY KEY NOT NULL,
+    "role_id"      int              NOT NULL,
+    "name"         VARCHAR          NOT NULL,
+    "phone_number" VARCHAR          NOT NULL,
+    "address"      TEXT             NOT NULL,
+    "email"        VARCHAR UNIQUE   NOT NULL,
+    "password"     VARCHAR          NOT NULL,
+    "created_at"   timestamptz      NOT NULL DEFAULT (NOW()),
+    "updated_at"   timestamptz
 );
 
 CREATE TABLE "roles"

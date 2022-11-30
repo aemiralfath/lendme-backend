@@ -8,14 +8,16 @@ import (
 )
 
 type User struct {
-	UserID    uuid.UUID `json:"user_id" db:"user_id" binding:"omitempty"`
-	RoleID    int       `json:"role_id" db:"role_id" binding:"omitempty"`
-	Name      string    `json:"name" db:"name" binding:"omitempty"`
-	Email     string    `json:"email" db:"email" binding:"required,email"`
-	Password  string    `json:"-" db:"password" binding:"required"`
-	CreatedAt time.Time `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt time.Time `json:"updated_at,omitempty" db:"updated_at"`
-	Role      *Role     `json:"role,omitempty" gorm:"foreignKey:RoleID;references:RoleID"`
+	UserID      uuid.UUID `json:"user_id" db:"user_id" binding:"omitempty"`
+	RoleID      int       `json:"role_id" db:"role_id" binding:"omitempty"`
+	Name        string    `json:"name" db:"name" binding:"omitempty"`
+	PhoneNumber string    `json:"phone_number" db:"phone_number" binding:"omitempty"`
+	Address     string    `json:"address" db:"address" binding:"omitempty"`
+	Email       string    `json:"email" db:"email" binding:"required,email"`
+	Password    string    `json:"-" db:"password" binding:"required"`
+	CreatedAt   time.Time `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty" db:"updated_at"`
+	Role        *Role     `json:"role,omitempty" gorm:"foreignKey:RoleID;references:RoleID"`
 }
 
 func (u *User) HashPassword() error {

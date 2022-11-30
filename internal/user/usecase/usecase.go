@@ -264,6 +264,38 @@ func (u *userUC) ConfirmContract(ctx context.Context, userID string) (*models.De
 	return debtor, nil
 }
 
+func (u *userUC) UpdateUserByID(ctx context.Context, userID string, body body.UpdateUserRequest) (*models.User, error) {
+	user, err := u.userRepo.GetUserDetailsByID(ctx, userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return user, httperror.New(http.StatusBadRequest, response.UserIDNotExist)
+		}
+		return user, err
+	}
+
+	if user.Email != body.Email {
+		existsUser, err := u.userRepo.CheckEmailExist(ctx, body.Email)
+		if existsUser.Email != "" {
+			return nil, httperror.New(http.StatusBadRequest, response.EmailAlreadyExistMessage)
+		}
+
+		if err != gorm.ErrRecordNotFound {
+			return user, err
+		}
+	}
+
+	user.Name = body.Name
+	user.PhoneNumber = body.PhoneNumber
+	user.Address = body.Address
+	user.Email = body.Email
+	user, err = u.userRepo.UpdateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (u *userUC) GetDebtorDetails(ctx context.Context, userID string) (*models.Debtor, error) {
 	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
 	if err != nil {

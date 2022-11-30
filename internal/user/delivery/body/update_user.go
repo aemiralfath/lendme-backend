@@ -3,27 +3,24 @@ package body
 import (
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/response"
-	"final-project-backend/pkg/utils"
 	"net/http"
 	"net/mail"
 	"strings"
 )
 
-type RegisterRequest struct {
+type UpdateUserRequest struct {
 	Name        string `json:"name"`
 	PhoneNumber string `json:"phone_number"`
 	Address     string `json:"address"`
 	Email       string `json:"email"`
-	Password    string `json:"password"`
 }
 
-func (r *RegisterRequest) Validate() (UnprocessableEntity, error) {
+func (r *UpdateUserRequest) Validate() (UnprocessableEntity, error) {
 	unprocessableEntity := false
 	entity := UnprocessableEntity{
 		Fields: map[string]string{
-			"name":     "",
-			"email":    "",
-			"password": "",
+			"name":  "",
+			"email": "",
 		},
 	}
 
@@ -55,11 +52,6 @@ func (r *RegisterRequest) Validate() (UnprocessableEntity, error) {
 	if err != nil {
 		unprocessableEntity = true
 		entity.Fields["email"] = InvalidEmailFormatMessage
-	}
-
-	if !utils.VerifyPassword(r.Password) {
-		unprocessableEntity = true
-		entity.Fields["password"] = InvalidPasswordFormatMessage
 	}
 
 	if unprocessableEntity {
