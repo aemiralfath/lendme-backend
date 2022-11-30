@@ -197,13 +197,14 @@ insert into "lending_status_types" (name)
 values ('new'),
        ('approved'),
        ('on progress'),
-       ('paid');
+       ('paid'),
+       ('reject');
 
 insert into "installment_status_types" (name)
 values ('on progress'),
        ('paid');
 
 -- // password: Tested8*
-insert into "users" (user_id, role_id, name, email, password)
-values ('101401ce-4a0f-11ed-9772-acde48001122', 1, 'admin', 'admin@seafund.com',
+insert into "users" (user_id, role_id, name, phone_number, address, email, password)
+values ('101401ce-4a0f-11ed-9772-acde48001122', 1, 'admin', '911', 'USA', 'admin@seafund.com',
         '$2a$10$ne0VPTKWnzVsdX7zfg1I1.MVK8RiNJDrXRf3JzoXqjaFdA3jaAGCC');

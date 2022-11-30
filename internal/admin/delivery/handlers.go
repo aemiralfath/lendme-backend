@@ -44,9 +44,45 @@ func (h *adminHandlers) GetDebtorByID(c *gin.Context) {
 	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
 }
 
+func (h *adminHandlers) GetVoucherByID(c *gin.Context) {
+	id := c.Param("id")
+	voucher, err := h.adminUC.GetVoucherByID(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
+}
+
 func (h *adminHandlers) ApproveLoan(c *gin.Context) {
 	id := c.Param("id")
 	lending, err := h.adminUC.ApproveLoan(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, lending, http.StatusOK)
+}
+
+func (h *adminHandlers) RejectLoan(c *gin.Context) {
+	id := c.Param("id")
+	lending, err := h.adminUC.RejectLoan(c, id)
 	if err != nil {
 		var e *httperror.Error
 		if !errors.As(err, &e) {
@@ -90,6 +126,36 @@ func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
 	}
 
 	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
+}
+
+func (h *adminHandlers) UpdateVoucher(c *gin.Context) {
+	id := c.Param("id")
+	var requestBody body.UpdateVoucherRequest
+	if err := c.ShouldBind(&requestBody); err != nil {
+		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
+		return
+	}
+
+	invalidFields, err := requestBody.Validate()
+	if err != nil {
+		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
+		return
+	}
+
+	voucher, err := h.adminUC.UpdateVoucherByID(c, id, requestBody)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
 }
 
 func (h *adminHandlers) CreateVoucher(c *gin.Context) {
@@ -241,7 +307,7 @@ func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pag
 
 	switch status {
 	case "history":
-		statusFilter = append(statusFilter, 4)
+		statusFilter = append(statusFilter, 4, 5)
 	default:
 		statusFilter = append(statusFilter, 1, 2, 3)
 	}

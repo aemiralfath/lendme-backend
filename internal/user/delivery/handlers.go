@@ -255,7 +255,7 @@ func (h *userHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pagi
 
 	switch status {
 	case "history":
-		statusFilter = append(statusFilter, 4)
+		statusFilter = append(statusFilter, 4, 5)
 	default:
 		statusFilter = append(statusFilter, 1, 2, 3)
 	}

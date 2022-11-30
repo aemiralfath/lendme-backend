@@ -109,6 +109,14 @@ func (r *adminRepo) GetVoucherByID(ctx context.Context, voucherID string) (*mode
 	return voucher, nil
 }
 
+func (r *adminRepo) UpdateVoucherByID(ctx context.Context, voucher *models.Voucher) error {
+	if err := r.db.WithContext(ctx).Where("voucher_id = ?", voucher.VoucherID).Save(voucher).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *adminRepo) UpdateDebtorByID(ctx context.Context, debtor *models.Debtor) (*models.Debtor, error) {
 	if err := r.db.Omit("ContractTracking", "CreditHealth", "User").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).Save(debtor).Error; err != nil {
 		return debtor, err

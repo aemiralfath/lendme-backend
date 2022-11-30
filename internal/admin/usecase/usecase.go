@@ -57,6 +57,18 @@ func (u *adminUC) GetInstallmentByID(ctx context.Context, id string) (*models.In
 	return installment, nil
 }
 
+func (u *adminUC) GetVoucherByID(ctx context.Context, id string) (*models.Voucher, error) {
+	voucher, err := u.adminRepo.GetVoucherByID(ctx, id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return voucher, httperror.New(http.StatusBadRequest, response.VoucherNotExist)
+		}
+		return voucher, err
+	}
+
+	return voucher, nil
+}
+
 func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending, err := u.adminRepo.GetLendingByID(ctx, lendingID)
 	if err != nil {
@@ -99,6 +111,34 @@ func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Le
 	return lending, nil
 }
 
+func (u *adminUC) RejectLoan(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending, err := u.adminRepo.GetLendingByID(ctx, lendingID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return lending, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
+		return lending, err
+	}
+
+	lending.LendingStatusID = 5
+	lending, err = u.adminRepo.UpdateLendingByID(ctx, lending)
+	if err != nil {
+		return lending, err
+	}
+
+	debtor, err := u.adminRepo.GetDebtorByID(ctx, lending.DebtorID.String())
+	if err != nil {
+		return lending, err
+	}
+
+	debtor.CreditUsed -= lending.Amount
+	if _, err := u.adminRepo.UpdateDebtorByID(ctx, debtor); err != nil {
+		return nil, err
+	}
+
+	return lending, nil
+}
+
 func (u *adminUC) UpdateDebtorByID(ctx context.Context, debtorID string, body body.UpdateContractRequest) (*models.Debtor, error) {
 	debtor, err := u.adminRepo.GetDebtorByID(ctx, debtorID)
 	if err != nil {
@@ -133,6 +173,28 @@ func (u *adminUC) UpdateDebtorByID(ctx context.Context, debtorID string, body bo
 	}
 
 	return debtor, nil
+}
+
+func (u *adminUC) UpdateVoucherByID(ctx context.Context, voucherID string, body body.UpdateVoucherRequest) (*models.Voucher, error) {
+	voucher, err := u.adminRepo.GetVoucherByID(ctx, voucherID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return voucher, httperror.New(http.StatusBadRequest, response.VoucherNotExist)
+		}
+		return voucher, err
+	}
+
+	voucher.Name = body.Name
+	voucher.DiscountPayment = body.DiscountPayment
+	voucher.DiscountQuota = body.DiscountQuota
+	voucher.ActiveDate = body.ActiveDateTime
+	voucher.ExpireDate = body.ExpireDateTime
+
+	if err := u.adminRepo.UpdateVoucherByID(ctx, voucher); err != nil {
+		return voucher, err
+	}
+
+	return voucher, nil
 }
 
 func (u *adminUC) CreateVoucher(ctx context.Context, body body.CreateVoucherRequest) (*models.Voucher, error) {

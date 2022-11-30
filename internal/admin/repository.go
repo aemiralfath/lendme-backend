@@ -24,5 +24,6 @@ type Repository interface {
 	UpdateInstallmentByID(ctx context.Context, installment *models.Installment) (*models.Installment, error)
 	CreateVoucher(ctx context.Context, voucher *models.Voucher) (*models.Voucher, error)
 	GetVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error)
+	UpdateVoucherByID(ctx context.Context, voucher *models.Voucher) error
 	DeleteVoucher(ctx context.Context, voucher *models.Voucher) error
 }

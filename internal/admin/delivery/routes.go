@@ -15,10 +15,13 @@ func MapAdminRoutes(adminGroup *gin.RouterGroup, h admin.Handlers, mw *middlewar
 	adminGroup.GET("/loans", h.GetLoans)
 	adminGroup.GET("/loans/:id", h.GetLoanByID)
 	adminGroup.PUT("/loans/:id", h.ApproveLoan)
+	adminGroup.DELETE("/loans/:id", h.RejectLoan)
 	adminGroup.GET("/loans/installment/:id", h.GetInstallmentByID)
 	adminGroup.PUT("/loans/installment/:id", h.UpdateInstallmentByID)
 	adminGroup.GET("/payments", h.GetPayments)
 	adminGroup.GET("/vouchers", h.GetVouchers)
 	adminGroup.POST("/vouchers", h.CreateVoucher)
+	adminGroup.GET("/vouchers/:id", h.GetVoucherByID)
+	adminGroup.PUT("/vouchers/:id", h.UpdateVoucher)
 	adminGroup.DELETE("/vouchers/:id", h.DeleteVoucher)
 }
