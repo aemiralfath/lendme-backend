@@ -34,7 +34,7 @@ func (s *Server) MapHandlers() error {
 	mw := middleware.NewMiddlewareManager(s.cfg, []string{"*"}, s.logger)
 	s.gin.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,

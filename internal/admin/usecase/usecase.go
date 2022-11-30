@@ -173,6 +173,23 @@ func (u *adminUC) UpdateInstallmentByID(ctx context.Context, installmentID strin
 	return installment, nil
 }
 
+func (u *adminUC) DeleteVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error) {
+	voucher, err := u.adminRepo.GetVoucherByID(ctx, voucherID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return voucher, httperror.New(http.StatusBadRequest, response.VoucherNotExist)
+		}
+		return voucher, err
+	}
+
+	err = u.adminRepo.DeleteVoucher(ctx, voucher)
+	if err := u.adminRepo.DeleteVoucher(ctx, voucher); err != nil {
+		return voucher, err
+	}
+
+	return voucher, nil
+}
+
 func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
 	loans, err := u.adminRepo.GetLoans(ctx, name, status, pagination)
 	if err != nil {

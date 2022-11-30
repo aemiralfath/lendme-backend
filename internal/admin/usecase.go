@@ -19,4 +19,5 @@ type UseCase interface {
 	UpdateInstallmentByID(ctx context.Context, installmentID string, body body.UpdateInstallmentRequest) (*models.Installment, error)
 	ApproveLoan(ctx context.Context, lendingID string) (*models.Lending, error)
 	CreateVoucher(ctx context.Context, body body.CreateVoucherRequest) (*models.Voucher, error)
+	DeleteVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error)
 }

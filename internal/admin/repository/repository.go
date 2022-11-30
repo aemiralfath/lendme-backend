@@ -100,6 +100,15 @@ func (r *adminRepo) GetCreditHealthByID(ctx context.Context, healthID int) (*mod
 	return health, nil
 }
 
+func (r *adminRepo) GetVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error) {
+	voucher := &models.Voucher{}
+	if err := r.db.WithContext(ctx).Where("voucher_id = ?", voucherID).First(voucher).Error; err != nil {
+		return voucher, err
+	}
+
+	return voucher, nil
+}
+
 func (r *adminRepo) UpdateDebtorByID(ctx context.Context, debtor *models.Debtor) (*models.Debtor, error) {
 	if err := r.db.Omit("ContractTracking", "CreditHealth", "User").WithContext(ctx).Where("debtor_id = ?", debtor.DebtorID).Save(debtor).Error; err != nil {
 		return debtor, err

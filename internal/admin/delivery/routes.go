@@ -20,4 +20,5 @@ func MapAdminRoutes(adminGroup *gin.RouterGroup, h admin.Handlers, mw *middlewar
 	adminGroup.GET("/payments", h.GetPayments)
 	adminGroup.GET("/vouchers", h.GetVouchers)
 	adminGroup.POST("/vouchers", h.CreateVoucher)
+	adminGroup.DELETE("/vouchers/:id", h.DeleteVoucher)
 }

@@ -121,6 +121,24 @@ func (h *adminHandlers) CreateVoucher(c *gin.Context) {
 	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
 }
 
+func (h *adminHandlers) DeleteVoucher(c *gin.Context) {
+	id := c.Param("id")
+	voucher, err := h.adminUC.DeleteVoucherByID(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
+}
+
 func (h *adminHandlers) GetInstallmentByID(c *gin.Context) {
 	id := c.Param("id")
 	installment, err := h.adminUC.GetInstallmentByID(c, id)
