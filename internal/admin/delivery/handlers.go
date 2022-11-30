@@ -26,23 +26,6 @@ func NewAdminHandlers(cfg *config.Config, adminUC admin.UseCase, log logger.Logg
 	return &adminHandlers{cfg: cfg, adminUC: adminUC, logger: log}
 }
 
-func (h *adminHandlers) GetDebtors(c *gin.Context) {
-	debtors, err := h.adminUC.GetDebtors(c)
-	if err != nil {
-		var e *httperror.Error
-		if !errors.As(err, &e) {
-			h.logger.Errorf("HandlerRegister, Error: %s", err)
-			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
-			return
-		}
-
-		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
-		return
-	}
-
-	response.SuccessResponse(c.Writer, debtors, http.StatusOK)
-}
-
 func (h *adminHandlers) GetDebtorByID(c *gin.Context) {
 	id := c.Param("id")
 	debtor, err := h.adminUC.GetDebtorByID(c, id)
@@ -387,6 +370,73 @@ func (h *adminHandlers) ValidateQueryVouchers(c *gin.Context, pagination *utils.
 		sortByFilter = sortBy
 	default:
 		sortByFilter = "active_date"
+	}
+
+	limitFilter, err := strconv.Atoi(limit)
+	if err != nil || limitFilter < 1 {
+		limitFilter = 10
+	}
+
+	pageFilter, err = strconv.Atoi(page)
+	if err != nil || pageFilter < 1 {
+		pageFilter = 1
+	}
+
+	pagination.Limit = limitFilter
+	pagination.Page = pageFilter
+	pagination.Sort = fmt.Sprintf("%s %s", sortByFilter, sortFilter)
+
+	return name
+}
+
+func (h *adminHandlers) GetDebtors(c *gin.Context) {
+	pagination := &utils.Pagination{}
+	name := h.ValidateQueryDebtors(c, pagination)
+
+	debtors, err := h.adminUC.GetDebtors(c, name, pagination)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, debtors, http.StatusOK)
+}
+
+func (h *adminHandlers) ValidateQueryDebtors(c *gin.Context, pagination *utils.Pagination) string {
+	name := strings.TrimSpace(c.Query("name"))
+	sort := strings.TrimSpace(c.Query("sort"))
+	sortBy := strings.TrimSpace(c.Query("sortBy"))
+	limit := strings.TrimSpace(c.Query("limit"))
+	page := strings.TrimSpace(c.Query("page"))
+
+	var sortFilter string
+	var sortByFilter string
+	var limitFilter int
+	var pageFilter int
+
+	switch sort {
+	case "asc":
+		sortFilter = sort
+	default:
+		sortFilter = "desc"
+	}
+
+	switch sortBy {
+	case "credit_limit":
+		sortByFilter = sortBy
+	case "credit_used":
+		sortByFilter = sortBy
+	case "total_delay":
+		sortByFilter = sortBy
+	default:
+		sortByFilter = "created_at"
 	}
 
 	limitFilter, err := strconv.Atoi(limit)

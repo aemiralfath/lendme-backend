@@ -11,7 +11,7 @@ type Repository interface {
 	GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
 	GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
 	GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error)
-	GetDebtors(ctx context.Context) ([]*models.Debtor, error)
+	GetDebtors(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
 	GetDebtorByID(ctx context.Context, debtorID string) (*models.Debtor, error)
 	GetLendingByID(ctx context.Context, lendingID string) (*models.Lending, error)
 	GetLendingWithInstallmentByID(ctx context.Context, lendingID string) (*models.Lending, error)

@@ -24,8 +24,8 @@ func NewAdminUseCase(cfg *config.Config, adminRepo admin.Repository) admin.UseCa
 	return &adminUC{cfg: cfg, adminRepo: adminRepo}
 }
 
-func (u *adminUC) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
-	debtors, err := u.adminRepo.GetDebtors(ctx)
+func (u *adminUC) GetDebtors(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	debtors, err := u.adminRepo.GetDebtors(ctx, name, pagination)
 	if err != nil {
 		return debtors, err
 	}

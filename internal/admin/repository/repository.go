@@ -20,13 +20,30 @@ func NewAdminRepository(db *gorm.DB) admin.Repository {
 	return &adminRepo{db: db}
 }
 
-func (r *adminRepo) GetDebtors(ctx context.Context) ([]*models.Debtor, error) {
+func (r *adminRepo) GetDebtors(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
 	var debtors []*models.Debtor
-	if err := r.db.Preload(clause.Associations).WithContext(ctx).Find(&debtors).Error; err != nil {
-		return debtors, nil
+
+	var totalRows int64
+	r.db.WithContext(ctx).Model(debtors).
+		Joins("inner join users on users.user_id = debtors.user_id").
+		Joins("inner join credit_health_types on credit_health_types.credit_health_id = debtors.credit_health_id").
+		Joins("inner join contract_tracking_types on contract_tracking_types.contract_tracking_id = debtors.contract_tracking_id").
+		Where("users.name ILIKE ? OR users.email ILIKE ?", fmt.Sprintf("%%%s%%", name), fmt.Sprintf("%%%s%%", name)).
+		Count(&totalRows)
+
+	if err := r.db.WithContext(ctx).
+		Joins("inner join users on users.user_id = debtors.user_id").
+		Joins("inner join credit_health_types on credit_health_types.credit_health_id = debtors.credit_health_id").
+		Joins("inner join contract_tracking_types on contract_tracking_types.contract_tracking_id = debtors.contract_tracking_id").
+		Where("users.name ILIKE ? OR users.email ILIKE ?", fmt.Sprintf("%%%s%%", name), fmt.Sprintf("%%%s%%", name)).
+		Preload(clause.Associations).
+		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort()).
+		Find(&debtors).Error; err != nil {
+		return pagination, err
 	}
 
-	return debtors, nil
+	pagination.Rows = debtors
+	return pagination, nil
 }
 
 func (r *adminRepo) GetLendingByID(ctx context.Context, lendingID string) (*models.Lending, error) {
