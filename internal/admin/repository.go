@@ -26,4 +26,10 @@ type Repository interface {
 	GetVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error)
 	UpdateVoucherByID(ctx context.Context, voucher *models.Voucher) error
 	DeleteVoucher(ctx context.Context, voucher *models.Voucher) error
+	GetUserTotal(ctx context.Context) (int64, error)
+	GetLendingTotal(ctx context.Context) (int64, error)
+	GetLendingAmount(ctx context.Context) (float64, error)
+	GetReturnAmount(ctx context.Context) (float64, error)
+	GetLendingAction(ctx context.Context) ([]*models.Lending, error)
+	GetUserAction(ctx context.Context) ([]*models.Debtor, error)
 }

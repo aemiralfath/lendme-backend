@@ -21,6 +21,7 @@ type UseCase interface {
 	RejectLoan(ctx context.Context, lendingID string) (*models.Lending, error)
 	CreateVoucher(ctx context.Context, body body.CreateVoucherRequest) (*models.Voucher, error)
 	GetVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error)
+	GetSummary(ctx context.Context) (*body.SummaryResponse, error)
 	UpdateVoucherByID(ctx context.Context, voucherID string, body body.UpdateVoucherRequest) (*models.Voucher, error)
 	DeleteVoucherByID(ctx context.Context, voucherID string) (*models.Voucher, error)
 }

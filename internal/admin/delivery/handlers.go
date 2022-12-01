@@ -291,6 +291,23 @@ func (h *adminHandlers) GetLoans(c *gin.Context) {
 	response.SuccessResponse(c.Writer, loans, http.StatusOK)
 }
 
+func (h *adminHandlers) GetSummary(c *gin.Context) {
+	summary, err := h.adminUC.GetSummary(c)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, summary, http.StatusOK)
+}
+
 func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pagination) (string, []int) {
 	name := strings.TrimSpace(c.Query("name"))
 	status := strings.TrimSpace(c.Query("status"))

@@ -202,6 +202,58 @@ func (r *adminRepo) GetLoanByID(ctx context.Context, lendingID string) (*models.
 	return lending, nil
 }
 
+func (r *adminRepo) GetUserTotal(ctx context.Context) (int64, error) {
+	var userTotal int64
+	if err := r.db.Model(&models.Debtor{}).WithContext(ctx).Count(&userTotal).Error; err != nil {
+		return userTotal, err
+	}
+
+	return userTotal, nil
+}
+
+func (r *adminRepo) GetLendingTotal(ctx context.Context) (int64, error) {
+	var lendingTotal int64
+	if err := r.db.Model(&models.Lending{}).WithContext(ctx).Where("lending_status_id NOT IN ?", []int{1, 5}).Count(&lendingTotal).Error; err != nil {
+		return lendingTotal, err
+	}
+
+	return lendingTotal, nil
+}
+
+func (r *adminRepo) GetLendingAmount(ctx context.Context) (float64, error) {
+	var lendingAmount float64
+	r.db.Model(&models.Lending{}).WithContext(ctx).Where("lending_status_id NOT IN ?", []int{1, 5}).Select("sum(amount)").Row().Scan(&lendingAmount)
+
+	return lendingAmount, nil
+}
+
+func (r *adminRepo) GetReturnAmount(ctx context.Context) (float64, error) {
+	var returnAmount float64
+	r.db.Model(&models.Payment{}).WithContext(ctx).Select("sum(payment_amount + payment_discount)").Row().Scan(&returnAmount)
+
+	return returnAmount, nil
+}
+
+func (r *adminRepo) GetLendingAction(ctx context.Context) ([]*models.Lending, error) {
+	var loans []*models.Lending
+
+	if err := r.db.WithContext(ctx).Preload(clause.Associations).Where("lending_status_id = ?", 1).Find(&loans).Error; err != nil {
+		return loans, err
+	}
+
+	return loans, nil
+}
+
+func (r *adminRepo) GetUserAction(ctx context.Context) ([]*models.Debtor, error) {
+	var users []*models.Debtor
+
+	if err := r.db.WithContext(ctx).Preload(clause.Associations).Where("contract_tracking_id < ?", 4).Find(&users).Error; err != nil {
+		return users, err
+	}
+
+	return users, nil
+}
+
 func (r *adminRepo) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
 	var loans []*models.Lending
 

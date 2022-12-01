@@ -18,4 +18,5 @@ type Handlers interface {
 	GetVoucherByID(c *gin.Context)
 	DeleteVoucher(c *gin.Context)
 	UpdateVoucher(c *gin.Context)
+	GetSummary(c *gin.Context)
 }

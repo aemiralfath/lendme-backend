@@ -69,6 +69,56 @@ func (u *adminUC) GetVoucherByID(ctx context.Context, id string) (*models.Vouche
 	return voucher, nil
 }
 
+func (u *adminUC) GetSummary(ctx context.Context) (*body.SummaryResponse, error) {
+	response := &body.SummaryResponse{
+		LendingAmount: 0,
+		ReturnAmount:  0,
+		LendingTotal:  0,
+		UserTotal:     0,
+		LendingAction: []*models.Lending{},
+		UserAction:    []*models.Debtor{},
+	}
+
+	userTotal, err := u.adminRepo.GetUserTotal(ctx)
+	if err != nil {
+		return response, err
+	}
+
+	lendingTotal, err := u.adminRepo.GetLendingTotal(ctx)
+	if err != nil {
+		return response, err
+	}
+
+	lendingAmount, err := u.adminRepo.GetLendingAmount(ctx)
+	if err != nil {
+		return response, err
+	}
+
+	returnAmount, err := u.adminRepo.GetReturnAmount(ctx)
+	if err != nil {
+		return response, err
+	}
+
+	lendingAction, err := u.adminRepo.GetLendingAction(ctx)
+	if err != nil {
+		return response, err
+	}
+
+	userAction, err := u.adminRepo.GetUserAction(ctx)
+	if err != nil {
+		return response, err
+	}
+
+	response.UserTotal = userTotal
+	response.LendingTotal = lendingTotal
+	response.LendingAmount = lendingAmount
+	response.ReturnAmount = returnAmount
+	response.LendingAction = lendingAction
+	response.UserAction = userAction
+
+	return response, nil
+}
+
 func (u *adminUC) ApproveLoan(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending, err := u.adminRepo.GetLendingByID(ctx, lendingID)
 	if err != nil {
