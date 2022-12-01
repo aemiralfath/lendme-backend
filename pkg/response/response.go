@@ -6,12 +6,11 @@ import (
 )
 
 const (
-	VersionMessage             = "version 1"
 	BadRequestMessage          = "Invalid request."
-	UnprocessableEntityMessage = "Unprocessable entity."
+	UnprocessableEntityMessage = "Request field not valid."
 	InternalServerErrorMessage = "Something is wrong, pls try again later."
 	NotFoundMessage            = "Route does not exist, please check again your route path."
-	UnauthorizedMessage        = "Unauthorized"
+	UnauthorizedMessage        = "Email or password not valid."
 	ForbiddenMessage           = "Forbidden"
 
 	EmailAlreadyExistMessage           = "Email already exist."
