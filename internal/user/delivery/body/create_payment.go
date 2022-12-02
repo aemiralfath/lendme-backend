@@ -8,9 +8,8 @@ import (
 )
 
 type CreatePayment struct {
-	LendingID     string `json:"lending_id"`
-	InstallmentID string `json:"installment_id"`
-	VoucherID     string `json:"voucher_id"`
+	LendingID string `json:"lending_id"`
+	VoucherID string `json:"voucher_id"`
 }
 
 func (r *CreatePayment) Validate() (UnprocessableEntity, error) {
@@ -29,12 +28,6 @@ func (r *CreatePayment) Validate() (UnprocessableEntity, error) {
 	if r.LendingID == "" {
 		unprocessableEntity = true
 		entity.Fields["lending_id"] = InvalidLoanIDFormatMessage
-	}
-
-	r.InstallmentID = strings.TrimSpace(r.InstallmentID)
-	if r.InstallmentID == "" {
-		unprocessableEntity = true
-		entity.Fields["installment_id"] = InvalidInstallmentIDFormatMessage
 	}
 
 	if unprocessableEntity {

@@ -45,7 +45,7 @@ func (u *userUC) GetInstallmentByID(ctx context.Context, id string) (*models.Ins
 	return installment, nil
 }
 
-func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.CreatePayment) (*models.Payment, error) {
+func (u *userUC) CreatePayment(ctx context.Context, userID, installmentID string, body body.CreatePayment) (*models.Payment, error) {
 	delay := 0
 	payment := &models.Payment{}
 
@@ -69,7 +69,7 @@ func (u *userUC) CreatePayment(ctx context.Context, userID string, body body.Cre
 		return payment, httperror.New(http.StatusBadRequest, response.LendingInstallmentNotMatch)
 	}
 
-	installment, err := u.userRepo.GetInstallmentByID(ctx, body.InstallmentID)
+	installment, err := u.userRepo.GetInstallmentByID(ctx, installmentID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return payment, httperror.New(http.StatusBadRequest, response.InstallmentNotExist)

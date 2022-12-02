@@ -27,6 +27,7 @@ func NewUserHandlers(cfg *config.Config, userUC user.UseCase, log logger.Logger)
 }
 
 func (h *userHandlers) CreatePayment(c *gin.Context) {
+	installmentId := c.Param("id")
 	userID, exist := c.Get("userID")
 	if !exist {
 		response.ErrorResponse(c.Writer, response.UnauthorizedMessage, http.StatusUnauthorized)
@@ -45,7 +46,7 @@ func (h *userHandlers) CreatePayment(c *gin.Context) {
 		return
 	}
 
-	payment, err := h.userUC.CreatePayment(c, userID.(string), requestBody)
+	payment, err := h.userUC.CreatePayment(c, userID.(string), installmentId, requestBody)
 	if err != nil {
 		var e *httperror.Error
 		if !errors.As(err, &e) {
