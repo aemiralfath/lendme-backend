@@ -18,6 +18,7 @@ const (
 	UserIDNotExist                     = "User ID not exist."
 	LendingIDNotExist                  = "Lending ID not exist."
 	ContractIDNotExist                 = "Contract ID not exist."
+	CreditIDNotExist                   = "Credit Health ID not exist."
 	ContractNotAccepted                = "Contract not accepted."
 	ContractNotConfirmed               = "Contract not confirmed."
 	ContractAlreadyAccepted            = "Contract already accepted."

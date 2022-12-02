@@ -22,7 +22,7 @@ func (r *UpdateContractRequest) Validate() (UnprocessableEntity, error) {
 		},
 	}
 
-	if r.CreditLimit < 0 {
+	if r.CreditLimit <= 0 {
 		unprocessableEntity = true
 		entity.Fields["credit_limit"] = InvalidCreditLimitFormatMessage
 	}

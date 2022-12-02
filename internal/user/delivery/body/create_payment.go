@@ -16,9 +16,8 @@ func (r *CreatePayment) Validate() (UnprocessableEntity, error) {
 	unprocessableEntity := false
 	entity := UnprocessableEntity{
 		Fields: map[string]string{
-			"lending_id":     "",
-			"installment_id": "",
-			"voucher_id":     "",
+			"lending_id": "",
+			"voucher_id": "",
 		},
 	}
 

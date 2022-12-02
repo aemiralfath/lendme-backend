@@ -9,6 +9,7 @@ import (
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/response"
 	"final-project-backend/pkg/utils"
+	"fmt"
 	"gorm.io/gorm"
 	"math"
 	"net/http"
@@ -27,6 +28,9 @@ func NewUserUseCase(cfg *config.Config, userRepo user.Repository) user.UseCase {
 func (u *userUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending, err := u.userRepo.GetLoanByID(ctx, lendingID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return lending, httperror.New(http.StatusBadRequest, response.LendingIDNotExist)
+		}
 		return lending, err
 	}
 
@@ -65,10 +69,6 @@ func (u *userUC) CreatePayment(ctx context.Context, userID, installmentID string
 		return payment, err
 	}
 
-	if lending.DebtorID != debtor.DebtorID {
-		return payment, httperror.New(http.StatusBadRequest, response.LendingInstallmentNotMatch)
-	}
-
 	installment, err := u.userRepo.GetInstallmentByID(ctx, installmentID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -79,6 +79,12 @@ func (u *userUC) CreatePayment(ctx context.Context, userID, installmentID string
 
 	if installment.InstallmentStatusID != 1 {
 		return payment, httperror.New(http.StatusBadRequest, response.InstallmentAlreadyPaid)
+	}
+
+	fmt.Println(lending.DebtorID)
+	fmt.Println(debtor.DebtorID)
+	if lending.DebtorID != debtor.DebtorID {
+		return payment, httperror.New(http.StatusBadRequest, response.LendingInstallmentNotMatch)
 	}
 
 	payment.VoucherID = nil

@@ -1,0 +1,4282 @@
+openapi: 3.0.0
+info:
+  title: p2p
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: user
+  - name: admin
+  - name: auth
+paths:
+  /api/v1/user/details:
+    get:
+      tags:
+        - user
+      summary: Debtor Details
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 09:08:59 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '906'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                  user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                  credit_health_id: 3
+                  contract_tracking_id: 5
+                  credit_limit: 2000000
+                  credit_used: 0
+                  total_delay: 21
+                  created_at: '2022-11-30T20:53:05.007724+07:00'
+                  updated_at: '2022-12-02T10:36:28.948813+07:00'
+                  user:
+                    user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                    role_id: 2
+                    name: Ahmad Emir Al Fatah
+                    phone_number: '083187115996'
+                    address: Jakarta Selatan
+                    email: emir@gmail.com
+                    created_at: '2022-11-30T20:53:05.005914+07:00'
+                    updated_at: '2022-12-02T10:33:50.819656+07:00'
+                  credit_health:
+                    credit_health_id: 3
+                    name: blocked
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  contract_tracking:
+                    contract_tracking_id: 5
+                    name: confirmed contract
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 09:08:05 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+    put:
+      tags:
+        - user
+      summary: Update User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Ahmad Emir Al Fatah
+                phone_number: '083187115996'
+                address: Jakarta Selatan
+                email: vania@gmail.com
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:33:50 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '419'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                  role_id: 2
+                  name: Ahmad Emir Al Fatah
+                  phone_number: '083187115996'
+                  address: Jakarta Selatan
+                  email: emir@gmail.com
+                  created_at: '2022-11-30T20:53:05.005914+07:00'
+                  updated_at: '2022-12-02T10:33:50.819656+07:00'
+                  role:
+                    role_id: 2
+                    name: user
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 09:10:19 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '43'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Update User: Invalid Request'
+                  value:
+                    Message: Invalid request.
+                    Data: null
+                example-1:
+                  summary: 'Update User: email already exists'
+                  value:
+                    Message: Email already exist.
+                    Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:32:32 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 09:11:06 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '203'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    address: Invalid address format.
+                    email: Invalid email format.
+                    name: Invalid name format.
+                    phone_number: Invalid phone number format.
+    patch:
+      tags:
+        - user
+      summary: Confirm Contract
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:36:28 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '906'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                  user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                  credit_health_id: 3
+                  contract_tracking_id: 5
+                  credit_limit: 2000000
+                  credit_used: 0
+                  total_delay: 21
+                  created_at: '2022-11-30T20:53:05.007724+07:00'
+                  updated_at: '2022-12-02T10:36:28.948813+07:00'
+                  user:
+                    user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                    role_id: 2
+                    name: Ahmad Emir Al Fatah
+                    phone_number: '083187115996'
+                    address: Jakarta Selatan
+                    email: emir@gmail.com
+                    created_at: '2022-11-30T20:53:05.005914+07:00'
+                    updated_at: '2022-12-02T10:33:50.819656+07:00'
+                  credit_health:
+                    credit_health_id: 3
+                    name: blocked
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  contract_tracking:
+                    contract_tracking_id: 5
+                    name: confirmed contract
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:34:49 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '53'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Confirm Contract: Contract already accepted'
+                  value:
+                    Message: Contract already accepted.
+                    Data: null
+                example-1:
+                  summary: 'Confirm Contract: Contract not accepted'
+                  value:
+                    Message: Contract not accepted.
+                    Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:34:29 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/user/loans:
+    post:
+      tags:
+        - user
+      summary: Create Loan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: makan
+                amount: 1000000
+                loan_period_id: 4
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:43:59 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '1490'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                  debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                  loan_period_id: 4
+                  lending_status_id: 1
+                  name: makan
+                  amount: 1200000
+                  created_at: '2022-12-02T17:43:59.693703+07:00'
+                  updated_at: '2022-12-02T17:43:59.693703+07:00'
+                  debtor:
+                    debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                    user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                    credit_health_id: 1
+                    contract_tracking_id: 5
+                    credit_limit: 2000000
+                    credit_used: 0
+                    total_delay: 21
+                    created_at: '2022-11-30T20:53:05.007724+07:00'
+                    updated_at: '2022-12-02T17:43:51.5529+07:00'
+                    user:
+                      user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                      role_id: 2
+                      name: Ahmad Emir Al Fatah
+                      phone_number: '083187115996'
+                      address: Jakarta Selatan
+                      email: emir@gmail.com
+                      created_at: '2022-11-30T20:53:05.005914+07:00'
+                      updated_at: '2022-12-02T10:33:50.819656+07:00'
+                    credit_health:
+                      credit_health_id: 1
+                      name: good
+                      created_at: '2022-11-30T20:51:57.643318+07:00'
+                      updated_at: '0001-01-01T00:00:00Z'
+                    contract_tracking:
+                      contract_tracking_id: 5
+                      name: confirmed contract
+                      created_at: '2022-11-30T20:51:57.643318+07:00'
+                      updated_at: '0001-01-01T00:00:00Z'
+                  loan_period:
+                    loan_period_id: 4
+                    duration: 12
+                    percentage: 120
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending_status:
+                    lending_status_id: 1
+                    name: new
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  installments: []
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:31:44 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '43'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Create Loan: Invalid Request'
+                  value:
+                    Message: Invalid request.
+                    Data: null
+                example-1:
+                  summary: 'Create Loan: Contract not confirmed'
+                  value:
+                    Message: Contract not confirmed.
+                    Data: null
+                example-2:
+                  summary: 'Create Loan: Loan period not exist'
+                  value:
+                    Message: Loan period ID not exist.
+                    Data: null
+                example-3:
+                  summary: 'Create Loan: exceed credit limit'
+                  value:
+                    Message: Loan amount exceed credit limit.
+                    Data: null
+                example-4:
+                  summary: 'Create Loan: exceed credit limit warning'
+                  value:
+                    Message: Loan amount exceed credit limit warning.
+                    Data: null
+                example-5:
+                  summary: 'Create Loan: credit health status blocked'
+                  value:
+                    Message: Credit health status blocked
+                    Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:30:17 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:38:32 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '173'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    amount: Invalid amount format.
+                    loan_period_id: Invalid loan period id format.
+                    name: Invalid name format.
+    get:
+      tags:
+        - user
+      summary: Get Loans
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          example: amount
+        - name: limit
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:38:26 GMT
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  limit: 10
+                  page: 1
+                  sort: amount desc
+                  total_rows: 1
+                  total_pages: 1
+                  rows:
+                    - lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                      debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                      loan_period_id: 2
+                      lending_status_id: 2
+                      name: Obat
+                      amount: 1050000
+                      created_at: '2022-12-01T23:41:25.710538+07:00'
+                      updated_at: '2022-12-01T23:41:38.810942+07:00'
+                      debtor:
+                        debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                        user_id: 036a8b4e-7194-11ed-a4aa-aa665a52e827
+                        credit_health_id: 1
+                        contract_tracking_id: 5
+                        credit_limit: 30000000
+                        credit_used: 1050000
+                        total_delay: 0
+                        created_at: '2022-12-01T23:20:04.549538+07:00'
+                        updated_at: '2022-12-01T23:47:19.161398+07:00'
+                        user:
+                          user_id: 036a8b4e-7194-11ed-a4aa-aa665a52e827
+                          role_id: 2
+                          name: Vania Angel
+                          phone_number: '08080808'
+                          address: Cikarang
+                          email: vania@gmail.com
+                          created_at: '2022-12-01T23:20:04.545081+07:00'
+                          updated_at: '2022-12-01T23:46:13.130343+07:00'
+                        credit_health:
+                          credit_health_id: 1
+                          name: good
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        contract_tracking:
+                          contract_tracking_id: 5
+                          name: confirmed contract
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                      loan_period:
+                        loan_period_id: 2
+                        duration: 3
+                        percentage: 105
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      lending_status:
+                        lending_status_id: 2
+                        name: approved
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      installments:
+                        - installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          installment_status_id: 1
+                          amount: 350000
+                          due_date: '2023-01-25T23:59:59.813882+07:00'
+                          created_at: '2022-12-01T23:41:38.814041+07:00'
+                          updated_at: '2022-12-01T23:41:38.814041+07:00'
+                          installment_status:
+                            installment_status_id: 1
+                            name: on progress
+                            created_at: '2022-11-30T20:51:57.643318+07:00'
+                            updated_at: '0001-01-01T00:00:00Z'
+                          lending:
+                            lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                            debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                            loan_period_id: 2
+                            lending_status_id: 2
+                            name: Obat
+                            amount: 1050000
+                            created_at: '2022-12-01T23:41:25.710538+07:00'
+                            updated_at: '2022-12-01T23:41:38.810942+07:00'
+                        - installment_id: 06e6bd6c-7197-11ed-a4ac-aa665a52e827
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          installment_status_id: 1
+                          amount: 350000
+                          due_date: '2023-02-25T23:59:59.813885+07:00'
+                          created_at: '2022-12-01T23:41:38.814041+07:00'
+                          updated_at: '2022-12-01T23:41:38.814041+07:00'
+                          installment_status:
+                            installment_status_id: 1
+                            name: on progress
+                            created_at: '2022-11-30T20:51:57.643318+07:00'
+                            updated_at: '0001-01-01T00:00:00Z'
+                          lending:
+                            lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                            debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                            loan_period_id: 2
+                            lending_status_id: 2
+                            name: Obat
+                            amount: 1050000
+                            created_at: '2022-12-01T23:41:25.710538+07:00'
+                            updated_at: '2022-12-01T23:41:38.810942+07:00'
+                        - installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          installment_status_id: 1
+                          amount: 350000
+                          due_date: '2023-03-25T23:59:59.813886+07:00'
+                          created_at: '2022-12-01T23:41:38.814041+07:00'
+                          updated_at: '2022-12-01T23:41:38.814041+07:00'
+                          installment_status:
+                            installment_status_id: 1
+                            name: on progress
+                            created_at: '2022-11-30T20:51:57.643318+07:00'
+                            updated_at: '0001-01-01T00:00:00Z'
+                          lending:
+                            lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                            debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                            loan_period_id: 2
+                            lending_status_id: 2
+                            name: Obat
+                            amount: 1050000
+                            created_at: '2022-12-01T23:41:25.710538+07:00'
+                            updated_at: '2022-12-01T23:41:38.810942+07:00'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:37:16 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/user/loans/ff174ade-7196-11ed-a4ac-aa665a52e827:
+    get:
+      tags:
+        - user
+      summary: Get loan by id
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:51:10 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '1497'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                  debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                  loan_period_id: 4
+                  lending_status_id: 1
+                  name: makan
+                  amount: 1200000
+                  created_at: '2022-12-02T17:43:59.693703+07:00'
+                  updated_at: '2022-12-02T17:43:59.693703+07:00'
+                  debtor:
+                    debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                    user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                    credit_health_id: 1
+                    contract_tracking_id: 5
+                    credit_limit: 2000000
+                    credit_used: 1200000
+                    total_delay: 21
+                    created_at: '2022-11-30T20:53:05.007724+07:00'
+                    updated_at: '2022-12-02T17:43:59.70213+07:00'
+                    user:
+                      user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                      role_id: 2
+                      name: Ahmad Emir Al Fatah
+                      phone_number: '083187115996'
+                      address: Jakarta Selatan
+                      email: emir@gmail.com
+                      created_at: '2022-11-30T20:53:05.005914+07:00'
+                      updated_at: '2022-12-02T10:33:50.819656+07:00'
+                    credit_health:
+                      credit_health_id: 1
+                      name: good
+                      created_at: '2022-11-30T20:51:57.643318+07:00'
+                      updated_at: '0001-01-01T00:00:00Z'
+                    contract_tracking:
+                      contract_tracking_id: 5
+                      name: confirmed contract
+                      created_at: '2022-11-30T20:51:57.643318+07:00'
+                      updated_at: '0001-01-01T00:00:00Z'
+                  loan_period:
+                    loan_period_id: 4
+                    duration: 12
+                    percentage: 120
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending_status:
+                    lending_status_id: 1
+                    name: new
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  installments: []
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:49:56 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '48'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Lending ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:47:43 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/user/loans/installments/06e6bd58-7197-11ed-a4ac-aa665a52e827:
+    get:
+      tags:
+        - user
+      summary: Get Installment by id
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:40:17 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '760'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                  lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                  installment_status_id: 1
+                  amount: 350000
+                  due_date: '2023-01-25T23:59:59.813882+07:00'
+                  created_at: '2022-12-01T23:41:38.814041+07:00'
+                  updated_at: '2022-12-01T23:41:38.814041+07:00'
+                  installment_status:
+                    installment_status_id: 1
+                    name: on progress
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending:
+                    lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                    debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                    loan_period_id: 2
+                    lending_status_id: 2
+                    name: Obat
+                    amount: 1050000
+                    created_at: '2022-12-01T23:41:25.710538+07:00'
+                    updated_at: '2022-12-01T23:41:38.810942+07:00'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:39:41 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '52'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Installment ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:39:26 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/user/loans/installments/06e6bd6c-7197-11ed-a4ac-aa665a52e827:
+    post:
+      tags:
+        - user
+      summary: Payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                voucher_id: ''
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:46:59 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '269'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  payment_id: f96b6892-71f3-11ed-bfd8-aa665a52e827
+                  installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                  voucher_id: null
+                  payment_fine: 0
+                  payment_discount: 0
+                  payment_amount: 350000
+                  payment_date: '2022-12-02T10:46:59.382129+07:00'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:44:43 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '48'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Payment: Lending ID not exist'
+                  value:
+                    Message: Lending ID not exist.
+                    Data: null
+                example-1:
+                  summary: 'Payment: Voucher ID not exist'
+                  value:
+                    Message: Voucher ID not exist.
+                    Data: null
+                example-2:
+                  summary: 'Payment: Invalid Request'
+                  value:
+                    Message: Invalid request.
+                    Data: null
+                example-3:
+                  summary: 'Payment: Lending ID and Installment ID not match'
+                  value:
+                    Message: Lending installment not match
+                    Data: null
+                example-4:
+                  summary: 'Payment: Lending id not exists'
+                  value:
+                    Message: Lending ID not exist.
+                    Data: null
+                example-5:
+                  summary: 'Payment: Installment id not exist'
+                  value:
+                    Message: Installment ID not exist.
+                    Data: null
+                example-6:
+                  summary: 'Payment: installment already paid.'
+                  value:
+                    Message: Installment already paid.
+                    Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:44:14 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 10:58:58 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '114'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    lending_id: Invalid loan id format.
+                    voucher_id: ''
+  /api/v1/user/vouchers:
+    get:
+      tags:
+        - user
+      summary: Get Vouchers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+          example: asc
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          example: amount
+        - name: limit
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 11:15:48 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '426'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  limit: 10
+                  page: 1
+                  sort: active_date asc
+                  total_rows: 1
+                  total_pages: 1
+                  rows:
+                    - voucher_id: 9f5f764c-7232-11ed-9c2c-aa665a52e827
+                      name: end year
+                      discount_payment: 1
+                      discount_quota: 1
+                      active_date: '2022-12-02T00:00:00+07:00'
+                      expire_date: '2022-12-02T23:59:59+07:00'
+                      created_at: '2022-12-02T18:15:26.612142+07:00'
+                      updated_at: '2022-12-02T18:15:26.612142+07:00'
+                      deleted_at: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 11:15:33 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/user/payments:
+    get:
+      tags:
+        - user
+      summary: Get Payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 11:19:38 GMT
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  limit: 10
+                  page: 1
+                  sort: payment_date desc
+                  total_rows: 16
+                  total_pages: 2
+                  rows:
+                    - payment_id: 541a4fc2-7232-11ed-9c2c-aa665a52e827
+                      installment_id: 06e6bd6c-7197-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 350000
+                      payment_date: '2022-12-02T18:13:20.322894+07:00'
+                      installment:
+                        installment_id: 06e6bd6c-7197-11ed-a4ac-aa665a52e827
+                        lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2023-02-23T23:59:59+07:00'
+                        created_at: '2022-12-01T23:41:38.814041+07:00'
+                        updated_at: '2022-12-02T18:13:20.338572+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T23:41:25.710538+07:00'
+                          updated_at: '2022-12-02T18:13:20.341904+07:00'
+                    - payment_id: 6dc8c00c-71f6-11ed-94c2-aa665a52e827
+                      installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 350000
+                      payment_date: '2022-12-02T11:04:33.605536+07:00'
+                      installment:
+                        installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                        lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2022-12-02T23:59:59+07:00'
+                        created_at: '2022-12-01T23:41:38.814041+07:00'
+                        updated_at: '2022-12-02T11:04:33.619498+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T23:41:25.710538+07:00'
+                          updated_at: '2022-12-02T18:13:20.341904+07:00'
+                    - payment_id: f96b6892-71f3-11ed-bfd8-aa665a52e827
+                      installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 350000
+                      payment_date: '2022-12-02T10:46:59.382129+07:00'
+                      installment:
+                        installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                        lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2023-01-25T23:59:59.813882+07:00'
+                        created_at: '2022-12-01T23:41:38.814041+07:00'
+                        updated_at: '2022-12-02T10:46:59.397863+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T23:41:25.710538+07:00'
+                          updated_at: '2022-12-02T18:13:20.341904+07:00'
+                    - payment_id: 521ee648-7196-11ed-a4ac-aa665a52e827
+                      installment_id: 172f6b12-7195-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 2000000
+                      payment_date: '2022-12-01T23:36:35.510595+07:00'
+                      installment:
+                        installment_id: 172f6b12-7195-11ed-a4ac-aa665a52e827
+                        lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 2000000
+                        due_date: '2023-12-25T23:59:59.140276+07:00'
+                        created_at: '2022-12-01T23:27:47.140431+07:00'
+                        updated_at: '2022-12-01T23:36:35.516975+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 4
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 24000000
+                          created_at: '2022-12-01T23:25:36.281295+07:00'
+                          updated_at: '2022-12-01T23:36:35.518442+07:00'
+                    - payment_id: 502a0732-7196-11ed-a4ac-aa665a52e827
+                      installment_id: 172f6b08-7195-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 2000000
+                      payment_date: '2022-12-01T23:36:32.228337+07:00'
+                      installment:
+                        installment_id: 172f6b08-7195-11ed-a4ac-aa665a52e827
+                        lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 2000000
+                        due_date: '2023-11-25T23:59:59.140276+07:00'
+                        created_at: '2022-12-01T23:27:47.140431+07:00'
+                        updated_at: '2022-12-01T23:36:32.234837+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 4
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 24000000
+                          created_at: '2022-12-01T23:25:36.281295+07:00'
+                          updated_at: '2022-12-01T23:36:35.518442+07:00'
+                    - payment_id: 4d44efa0-7196-11ed-a4ac-aa665a52e827
+                      installment_id: 172f6b08-7195-11ed-a4ab-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 2000000
+                      payment_date: '2022-12-01T23:36:27.371422+07:00'
+                      installment:
+                        installment_id: 172f6b08-7195-11ed-a4ab-aa665a52e827
+                        lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 2000000
+                        due_date: '2023-10-25T23:59:59.140275+07:00'
+                        created_at: '2022-12-01T23:27:47.140431+07:00'
+                        updated_at: '2022-12-01T23:36:27.377074+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 4
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 24000000
+                          created_at: '2022-12-01T23:25:36.281295+07:00'
+                          updated_at: '2022-12-01T23:36:35.518442+07:00'
+                    - payment_id: 4a225d1c-7196-11ed-a4ac-aa665a52e827
+                      installment_id: 172f6afe-7195-11ed-a4ab-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 2000000
+                      payment_date: '2022-12-01T23:36:22.111479+07:00'
+                      installment:
+                        installment_id: 172f6afe-7195-11ed-a4ab-aa665a52e827
+                        lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 2000000
+                        due_date: '2023-09-25T23:59:59.140274+07:00'
+                        created_at: '2022-12-01T23:27:47.140431+07:00'
+                        updated_at: '2022-12-01T23:36:22.117861+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 4
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 24000000
+                          created_at: '2022-12-01T23:25:36.281295+07:00'
+                          updated_at: '2022-12-01T23:36:35.518442+07:00'
+                    - payment_id: 3358ff32-7196-11ed-a4ac-aa665a52e827
+                      installment_id: 172f6af4-7195-11ed-a4ab-aa665a52e827
+                      voucher_id: 12e2bf54-7196-11ed-a4ac-aa665a52e827
+                      payment_fine: 5000
+                      payment_discount: 20000
+                      payment_amount: 1985000
+                      payment_date: '2022-12-01T23:35:43.864009+07:00'
+                      installment:
+                        installment_id: 172f6af4-7195-11ed-a4ab-aa665a52e827
+                        lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 2000000
+                        due_date: '2022-11-30T23:59:59+07:00'
+                        created_at: '2022-12-01T23:27:47.140431+07:00'
+                        updated_at: '2022-12-01T23:35:43.890392+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 4
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 24000000
+                          created_at: '2022-12-01T23:25:36.281295+07:00'
+                          updated_at: '2022-12-01T23:36:35.518442+07:00'
+                    - payment_id: 19f6bcd2-7196-11ed-a4ac-aa665a52e827
+                      installment_id: 172f6aea-7195-11ed-a4ab-aa665a52e827
+                      voucher_id: 12e2bf54-7196-11ed-a4ac-aa665a52e827
+                      payment_fine: 0
+                      payment_discount: 20000
+                      payment_amount: 1980000
+                      payment_date: '2022-12-01T23:35:01.29484+07:00'
+                      installment:
+                        installment_id: 172f6aea-7195-11ed-a4ab-aa665a52e827
+                        lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 2000000
+                        due_date: '2023-07-25T23:59:59.140273+07:00'
+                        created_at: '2022-12-01T23:27:47.140431+07:00'
+                        updated_at: '2022-12-01T23:35:01.303683+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 4
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 24000000
+                          created_at: '2022-12-01T23:25:36.281295+07:00'
+                          updated_at: '2022-12-01T23:36:35.518442+07:00'
+                    - payment_id: e562a35a-7195-11ed-a4ac-aa665a52e827
+                      installment_id: 172f6aea-7195-11ed-a4aa-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 2000000
+                      payment_date: '2022-12-01T23:33:33.082926+07:00'
+                      installment:
+                        installment_id: 172f6aea-7195-11ed-a4aa-aa665a52e827
+                        lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 2000000
+                        due_date: '2023-06-25T23:59:59.140272+07:00'
+                        created_at: '2022-12-01T23:27:47.140431+07:00'
+                        updated_at: '2022-12-01T23:33:33.088846+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: c92fd2c6-7194-11ed-a4aa-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 4
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 24000000
+                          created_at: '2022-12-01T23:25:36.281295+07:00'
+                          updated_at: '2022-12-01T23:36:35.518442+07:00'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 11:18:25 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin:
+    get:
+      tags:
+        - admin
+      summary: Get Summary
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:51:33 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '990'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  user_total: 6
+                  lending_amount: 37600000
+                  return_amount: 37255002
+                  lending_total: 10
+                  lending_action: []
+                  user_action:
+                    - debtor_id: aaa55c04-71ee-11ed-9fa8-aa665a52e827
+                      user_id: aa948f1e-71ee-11ed-9fa8-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 1
+                      credit_limit: 0
+                      credit_used: 0
+                      total_delay: 0
+                      created_at: '2022-12-02T10:08:59.747675+07:00'
+                      updated_at: '2022-12-02T10:08:59.747675+07:00'
+                      user:
+                        user_id: aa948f1e-71ee-11ed-9fa8-aa665a52e827
+                        role_id: 2
+                        name: emir
+                        phone_number: '0898090909'
+                        address: Jakarta
+                        email: emir2@gmail.com
+                        created_at: '2022-12-02T10:08:59.72208+07:00'
+                        updated_at: '2022-12-02T10:08:59.72208+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 1
+                        name: no contract yet
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:02:57 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin/debtors:
+    get:
+      tags:
+        - admin
+      summary: Get Debtors
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+          example: asc
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          example: amount
+        - name: limit
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:04:37 GMT
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  limit: 10
+                  page: 1
+                  sort: created_at asc
+                  total_rows: 0
+                  total_pages: 0
+                  rows:
+                    - debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                      user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 2000000
+                      credit_used: 1200000
+                      total_delay: 21
+                      created_at: '2022-11-30T20:53:05.007724+07:00'
+                      updated_at: '2022-12-02T17:43:59.70213+07:00'
+                      user:
+                        user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                        role_id: 2
+                        name: Ahmad Emir Al Fatah
+                        phone_number: '083187115996'
+                        address: Jakarta Selatan
+                        email: emir@gmail.com
+                        created_at: '2022-11-30T20:53:05.005914+07:00'
+                        updated_at: '2022-12-02T10:33:50.819656+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - debtor_id: 0b5a3190-714b-11ed-9120-aa665a52e827
+                      user_id: 0b4ddf6c-714b-11ed-9120-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 2000000
+                      credit_used: 0
+                      total_delay: 0
+                      created_at: '2022-12-01T14:37:44.530131+07:00'
+                      updated_at: '2022-12-01T19:17:20.594926+07:00'
+                      user:
+                        user_id: 0b4ddf6c-714b-11ed-9120-aa665a52e827
+                        role_id: 2
+                        name: angel
+                        phone_number: '0853668832'
+                        address: Jakarta
+                        email: angel@gmail.com
+                        created_at: '2022-12-01T14:37:44.521547+07:00'
+                        updated_at: '2022-12-01T14:37:44.521547+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - debtor_id: 80d15f4e-715e-11ed-9a6a-aa665a52e827
+                      user_id: 80c6b382-715e-11ed-9a6a-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 1000000
+                      credit_used: 0
+                      total_delay: 0
+                      created_at: '2022-12-01T16:57:02.042417+07:00'
+                      updated_at: '2022-12-01T19:17:15.949692+07:00'
+                      user:
+                        user_id: 80c6b382-715e-11ed-9a6a-aa665a52e827
+                        role_id: 2
+                        name: Tapee
+                        phone_number: '080808080'
+                        address: Jakarta Selatan
+                        email: tapee@gmail.com
+                        created_at: '2022-12-01T16:57:02.04117+07:00'
+                        updated_at: '2022-12-01T17:55:47.498502+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - debtor_id: 5504309c-7174-11ed-a4aa-aa665a52e827
+                      user_id: 54f74ba2-7174-11ed-a4aa-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 20000000
+                      credit_used: 0
+                      total_delay: 0
+                      created_at: '2022-12-01T19:33:17.483824+07:00'
+                      updated_at: '2022-12-01T23:40:09.162112+07:00'
+                      user:
+                        user_id: 54f74ba2-7174-11ed-a4aa-aa665a52e827
+                        role_id: 2
+                        name: ratu
+                        phone_number: '08118902406'
+                        address: Depok
+                        email: amany@shopee.com
+                        created_at: '2022-12-01T19:33:17.47314+07:00'
+                        updated_at: '2022-12-01T19:33:17.47314+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                      user_id: 036a8b4e-7194-11ed-a4aa-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 30000000
+                      credit_used: 0
+                      total_delay: 0
+                      created_at: '2022-12-01T23:20:04.549538+07:00'
+                      updated_at: '2022-12-02T18:13:20.336109+07:00'
+                      user:
+                        user_id: 036a8b4e-7194-11ed-a4aa-aa665a52e827
+                        role_id: 2
+                        name: Angela Vania
+                        phone_number: '080808'
+                        address: Cikarang Meikarta
+                        email: vania@gmail.com
+                        created_at: '2022-12-01T23:20:04.545081+07:00'
+                        updated_at: '2022-12-02T11:03:30.491838+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - debtor_id: aaa55c04-71ee-11ed-9fa8-aa665a52e827
+                      user_id: aa948f1e-71ee-11ed-9fa8-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 1000000
+                      credit_used: 0
+                      total_delay: 0
+                      created_at: '2022-12-02T10:08:59.747675+07:00'
+                      updated_at: '2022-12-02T14:58:23.07581+07:00'
+                      user:
+                        user_id: aa948f1e-71ee-11ed-9fa8-aa665a52e827
+                        role_id: 2
+                        name: emir
+                        phone_number: '0898090909'
+                        address: Jakarta
+                        email: emir2@gmail.com
+                        created_at: '2022-12-02T10:08:59.72208+07:00'
+                        updated_at: '2022-12-02T10:08:59.72208+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - debtor_id: 8cf7332a-720d-11ed-94c2-aa665a52e827
+                      user_id: 8ceba0be-720d-11ed-94c2-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 3000000
+                      credit_used: 1000000
+                      total_delay: 5
+                      created_at: '2022-12-02T13:50:04.350668+07:00'
+                      updated_at: '2022-12-02T14:49:20.205063+07:00'
+                      user:
+                        user_id: 8ceba0be-720d-11ed-94c2-aa665a52e827
+                        role_id: 2
+                        name: Fajar J
+                        phone_number: '080808'
+                        address: Banjarnegara
+                        email: fajar@gmail.com
+                        created_at: '2022-12-02T13:50:04.345136+07:00'
+                        updated_at: '2022-12-02T14:25:53.602446+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - debtor_id: 564da63c-7227-11ed-94c2-aa665a52e827
+                      user_id: 563fc81e-7227-11ed-94c2-aa665a52e827
+                      credit_health_id: 1
+                      contract_tracking_id: 5
+                      credit_limit: 20000000
+                      credit_used: 0
+                      total_delay: 2
+                      created_at: '2022-12-02T16:54:39.557518+07:00'
+                      updated_at: '2022-12-02T17:06:01.581758+07:00'
+                      user:
+                        user_id: 563fc81e-7227-11ed-94c2-aa665a52e827
+                        role_id: 2
+                        name: Alvin A
+                        phone_number: '0854315835'
+                        address: Medan
+                        email: alvin2@gmail.com
+                        created_at: '2022-12-02T16:54:39.549917+07:00'
+                        updated_at: '2022-12-02T17:05:30.927467+07:00'
+                      credit_health:
+                        credit_health_id: 1
+                        name: good
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      contract_tracking:
+                        contract_tracking_id: 5
+                        name: confirmed contract
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:03:48 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin/debtors/5030a00a-70b6-11ed-8de0-aa665a52e827:
+    get:
+      tags:
+        - admin
+      summary: Get Debtor By ID
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:06:59 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '908'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                  user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                  credit_health_id: 1
+                  contract_tracking_id: 5
+                  credit_limit: 2000000
+                  credit_used: 1200000
+                  total_delay: 21
+                  created_at: '2022-11-30T20:53:05.007724+07:00'
+                  updated_at: '2022-12-02T17:43:59.70213+07:00'
+                  user:
+                    user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                    role_id: 2
+                    name: Ahmad Emir Al Fatah
+                    phone_number: '083187115996'
+                    address: Jakarta Selatan
+                    email: emir@gmail.com
+                    created_at: '2022-11-30T20:53:05.005914+07:00'
+                    updated_at: '2022-12-02T10:33:50.819656+07:00'
+                  credit_health:
+                    credit_health_id: 1
+                    name: good
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  contract_tracking:
+                    contract_tracking_id: 5
+                    name: confirmed contract
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:05:56 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '47'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Debtor ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:05:07 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+    put:
+      tags:
+        - admin
+      summary: Update Debtors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                credit_limit: 1000000
+                credit_health_id: 2
+                contract_status_id: 2
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:15:32 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '942'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                  user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                  credit_health_id: 2
+                  contract_tracking_id: 2
+                  credit_limit: 1000000
+                  credit_used: 1200000
+                  total_delay: 21
+                  created_at: '2022-11-30T20:53:05.007724+07:00'
+                  updated_at: '2022-12-02T19:15:32.060737+07:00'
+                  user:
+                    user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                    role_id: 2
+                    name: Ahmad Emir Al Fatah
+                    phone_number: '083187115996'
+                    address: Jakarta Selatan
+                    email: emir@gmail.com
+                    created_at: '2022-11-30T20:53:05.005914+07:00'
+                    updated_at: '2022-12-02T10:33:50.819656+07:00'
+                  credit_health:
+                    credit_health_id: 2
+                    name: warning
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  contract_tracking:
+                    contract_tracking_id: 2
+                    name: the contract was given to the expedition partner
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:10:07 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '43'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Update Debtors: Invalid Request'
+                  value:
+                    Message: Invalid request.
+                    Data: null
+                example-1:
+                  summary: 'Update Debtors: debtor id not exists'
+                  value:
+                    Message: Debtor ID not exist.
+                    Data: null
+                example-2:
+                  summary: 'Update Debtors: Contract id not exists'
+                  value:
+                    Message: Contract ID not exist.
+                    Data: null
+                example-3:
+                  summary: 'Update Debtors: Credit health id not exist'
+                  value:
+                    Message: Credit Health ID not exist.
+                    Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:08:20 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:11:16 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '211'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    contract_status_id: Invalid contract status format.
+                    credit_health_id: Invalid credit health format.
+                    credit_limit: Invalid credit limit format.
+  /api/v1/admin/loans:
+    get:
+      tags:
+        - admin
+      summary: Get Loans
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+          example: asc
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          example: amount
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: '0'
+        - name: page
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: integer
+          example: '1'
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:54:25 GMT
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  limit: 10
+                  page: 1
+                  sort: amount asc
+                  total_rows: 1
+                  total_pages: 1
+                  rows:
+                    - lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                      debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                      loan_period_id: 2
+                      lending_status_id: 3
+                      name: Obat
+                      amount: 1050000
+                      created_at: '2022-12-01T23:41:25.710538+07:00'
+                      updated_at: '2022-12-02T10:46:59.400599+07:00'
+                      debtor:
+                        debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                        user_id: 036a8b4e-7194-11ed-a4aa-aa665a52e827
+                        credit_health_id: 1
+                        contract_tracking_id: 5
+                        credit_limit: 30000000
+                        credit_used: 700000
+                        total_delay: 0
+                        created_at: '2022-12-01T23:20:04.549538+07:00'
+                        updated_at: '2022-12-02T10:46:59.394912+07:00'
+                        user:
+                          user_id: 036a8b4e-7194-11ed-a4aa-aa665a52e827
+                          role_id: 2
+                          name: Vania Angel
+                          phone_number: '08080808'
+                          address: Cikarang
+                          email: vania@gmail.com
+                          created_at: '2022-12-01T23:20:04.545081+07:00'
+                          updated_at: '2022-12-01T23:46:13.130343+07:00'
+                        credit_health:
+                          credit_health_id: 1
+                          name: good
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        contract_tracking:
+                          contract_tracking_id: 5
+                          name: confirmed contract
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                      loan_period:
+                        loan_period_id: 2
+                        duration: 3
+                        percentage: 105
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      lending_status:
+                        lending_status_id: 3
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      installments:
+                        - installment_id: 06e6bd6c-7197-11ed-a4ac-aa665a52e827
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          installment_status_id: 1
+                          amount: 350000
+                          due_date: '2023-02-25T23:59:59.813885+07:00'
+                          created_at: '2022-12-01T23:41:38.814041+07:00'
+                          updated_at: '2022-12-01T23:41:38.814041+07:00'
+                          installment_status:
+                            installment_status_id: 1
+                            name: on progress
+                            created_at: '2022-11-30T20:51:57.643318+07:00'
+                            updated_at: '0001-01-01T00:00:00Z'
+                          lending:
+                            lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                            debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                            loan_period_id: 2
+                            lending_status_id: 3
+                            name: Obat
+                            amount: 1050000
+                            created_at: '2022-12-01T23:41:25.710538+07:00'
+                            updated_at: '2022-12-02T10:46:59.400599+07:00'
+                        - installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          installment_status_id: 1
+                          amount: 350000
+                          due_date: '2023-03-25T23:59:59.813886+07:00'
+                          created_at: '2022-12-01T23:41:38.814041+07:00'
+                          updated_at: '2022-12-01T23:41:38.814041+07:00'
+                          installment_status:
+                            installment_status_id: 1
+                            name: on progress
+                            created_at: '2022-11-30T20:51:57.643318+07:00'
+                            updated_at: '0001-01-01T00:00:00Z'
+                          lending:
+                            lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                            debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                            loan_period_id: 2
+                            lending_status_id: 3
+                            name: Obat
+                            amount: 1050000
+                            created_at: '2022-12-01T23:41:25.710538+07:00'
+                            updated_at: '2022-12-02T10:46:59.400599+07:00'
+                        - installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          installment_status_id: 2
+                          amount: 350000
+                          due_date: '2023-01-25T23:59:59.813882+07:00'
+                          created_at: '2022-12-01T23:41:38.814041+07:00'
+                          updated_at: '2022-12-02T10:46:59.397863+07:00'
+                          installment_status:
+                            installment_status_id: 2
+                            name: paid
+                            created_at: '2022-11-30T20:51:57.643318+07:00'
+                            updated_at: '0001-01-01T00:00:00Z'
+                          lending:
+                            lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                            debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                            loan_period_id: 2
+                            lending_status_id: 3
+                            name: Obat
+                            amount: 1050000
+                            created_at: '2022-12-01T23:41:25.710538+07:00'
+                            updated_at: '2022-12-02T10:46:59.400599+07:00'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:15:58 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin/loans/c783c988-7215-11ed-94c2-aa665a52e827:
+    get:
+      tags:
+        - admin
+      summary: Get Loan by id
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:19:27 GMT
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  lending_id: c783c988-7215-11ed-94c2-aa665a52e827
+                  debtor_id: 8cf7332a-720d-11ed-94c2-aa665a52e827
+                  loan_period_id: 1
+                  lending_status_id: 2
+                  name: makan
+                  amount: 1000000
+                  created_at: '2022-12-02T14:48:58.553863+07:00'
+                  updated_at: '2022-12-02T14:49:17.70137+07:00'
+                  debtor:
+                    debtor_id: 8cf7332a-720d-11ed-94c2-aa665a52e827
+                    user_id: 8ceba0be-720d-11ed-94c2-aa665a52e827
+                    credit_health_id: 1
+                    contract_tracking_id: 5
+                    credit_limit: 3000000
+                    credit_used: 1000000
+                    total_delay: 5
+                    created_at: '2022-12-02T13:50:04.350668+07:00'
+                    updated_at: '2022-12-02T14:49:20.205063+07:00'
+                    user:
+                      user_id: 8ceba0be-720d-11ed-94c2-aa665a52e827
+                      role_id: 2
+                      name: Fajar J
+                      phone_number: '080808'
+                      address: Banjarnegara
+                      email: fajar@gmail.com
+                      created_at: '2022-12-02T13:50:04.345136+07:00'
+                      updated_at: '2022-12-02T14:25:53.602446+07:00'
+                    credit_health:
+                      credit_health_id: 1
+                      name: good
+                      created_at: '2022-11-30T20:51:57.643318+07:00'
+                      updated_at: '0001-01-01T00:00:00Z'
+                    contract_tracking:
+                      contract_tracking_id: 5
+                      name: confirmed contract
+                      created_at: '2022-11-30T20:51:57.643318+07:00'
+                      updated_at: '0001-01-01T00:00:00Z'
+                  loan_period:
+                    loan_period_id: 1
+                    duration: 1
+                    percentage: 100
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending_status:
+                    lending_status_id: 2
+                    name: approved
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  installments:
+                    - installment_id: d2edcd82-7215-11ed-94c2-aa665a52e827
+                      lending_id: c783c988-7215-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 1000000
+                      due_date: '2023-01-23T23:59:59+07:00'
+                      created_at: '2022-12-02T14:49:17.703417+07:00'
+                      updated_at: '2022-12-02T17:07:01.093075+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                      lending:
+                        lending_id: c783c988-7215-11ed-94c2-aa665a52e827
+                        debtor_id: 8cf7332a-720d-11ed-94c2-aa665a52e827
+                        loan_period_id: 1
+                        lending_status_id: 2
+                        name: makan
+                        amount: 1000000
+                        created_at: '2022-12-02T14:48:58.553863+07:00'
+                        updated_at: '2022-12-02T14:49:17.70137+07:00'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:18:41 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '48'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Lending ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:17:42 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin/loans/3aae9268-722e-11ed-94c2-aa665a52e827:
+    put:
+      tags:
+        - admin
+      summary: Approve Loan
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:24:25 GMT
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                  debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                  loan_period_id: 4
+                  lending_status_id: 2
+                  name: makan
+                  amount: 1200000
+                  created_at: '2022-12-02T17:43:59.693703+07:00'
+                  updated_at: '2022-12-02T19:24:25.059821+07:00'
+                  debtor:
+                    debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                    user_id: 502578a6-70b6-11ed-8de0-aa665a52e827
+                    credit_health_id: 2
+                    contract_tracking_id: 2
+                    credit_limit: 1000000
+                    credit_used: 1200000
+                    total_delay: 21
+                    created_at: '2022-11-30T20:53:05.007724+07:00'
+                    updated_at: '2022-12-02T19:15:32.060737+07:00'
+                  loan_period:
+                    loan_period_id: 4
+                    duration: 12
+                    percentage: 120
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending_status:
+                    lending_status_id: 2
+                    name: approved
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  installments:
+                    - installment_id: 4215d10c-723c-11ed-b33c-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-01-25T23:59:59.068363+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d6de-723c-11ed-b33c-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-02-25T23:59:59.068513+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d6e8-723c-11ed-b33c-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-03-25T23:59:59.068515+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d6f2-723c-11ed-b33c-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-04-25T23:59:59.068516+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d6fc-723c-11ed-b33c-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-05-25T23:59:59.068517+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d6fc-723c-11ed-b33d-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-06-25T23:59:59.068518+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d706-723c-11ed-b33d-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-07-25T23:59:59.068519+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d710-723c-11ed-b33d-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-08-25T23:59:59.06852+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d71a-723c-11ed-b33d-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-09-25T23:59:59.06852+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d724-723c-11ed-b33d-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-10-25T23:59:59.068521+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d72e-723c-11ed-b33d-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-11-25T23:59:59.068522+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+                    - installment_id: 4215d738-723c-11ed-b33d-aa665a52e827
+                      lending_id: 3aae9268-722e-11ed-94c2-aa665a52e827
+                      installment_status_id: 1
+                      amount: 100000
+                      due_date: '2023-12-25T23:59:59.068523+07:00'
+                      created_at: '2022-12-02T19:24:25.068764+07:00'
+                      updated_at: '2022-12-02T19:24:25.068764+07:00'
+                      installment_status:
+                        installment_status_id: 1
+                        name: on progress
+                        created_at: '2022-11-30T20:51:57.643318+07:00'
+                        updated_at: '0001-01-01T00:00:00Z'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:23:32 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '47'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Debtor ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:22:34 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin/loans/92615410-723c-11ed-b33d-aa665a52e827:
+    delete:
+      tags:
+        - admin
+      summary: Reject Loan
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:28:34 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '925'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  lending_id: 92615410-723c-11ed-b33d-aa665a52e827
+                  debtor_id: 564da63c-7227-11ed-94c2-aa665a52e827
+                  loan_period_id: 1
+                  lending_status_id: 5
+                  name: Obat
+                  amount: 1000000
+                  created_at: '2022-12-02T19:26:39.781251+07:00'
+                  updated_at: '2022-12-02T19:28:34.142813+07:00'
+                  debtor:
+                    debtor_id: 564da63c-7227-11ed-94c2-aa665a52e827
+                    user_id: 563fc81e-7227-11ed-94c2-aa665a52e827
+                    credit_health_id: 1
+                    contract_tracking_id: 5
+                    credit_limit: 20000000
+                    credit_used: 1000000
+                    total_delay: 2
+                    created_at: '2022-12-02T16:54:39.557518+07:00'
+                    updated_at: '2022-12-02T19:26:39.791736+07:00'
+                  loan_period:
+                    loan_period_id: 1
+                    duration: 1
+                    percentage: 100
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending_status:
+                    lending_status_id: 5
+                    name: reject
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  installments: []
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:25:22 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '47'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Debtor ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:24:55 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin/loans/installments/06e6bd76-7197-11ed-a4ac-aa665a52e825:
+    get:
+      tags:
+        - admin
+      summary: Get Installment by id
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:56:59 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '760'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                  lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                  installment_status_id: 1
+                  amount: 350000
+                  due_date: '2023-03-25T23:59:59.813886+07:00'
+                  created_at: '2022-12-01T23:41:38.814041+07:00'
+                  updated_at: '2022-12-01T23:41:38.814041+07:00'
+                  installment_status:
+                    installment_status_id: 1
+                    name: on progress
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending:
+                    lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                    debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                    loan_period_id: 2
+                    lending_status_id: 3
+                    name: Obat
+                    amount: 1050000
+                    created_at: '2022-12-01T23:41:25.710538+07:00'
+                    updated_at: '2022-12-02T10:46:59.400599+07:00'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:30:45 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '52'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Installment ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:29:48 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+    put:
+      tags:
+        - admin
+      summary: Update Installment Due Date
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                due_date: 02-12-2022 23:59:59
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:58:40 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '753'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                  lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                  installment_status_id: 1
+                  amount: 350000
+                  due_date: '2022-12-02T23:59:59+07:00'
+                  created_at: '2022-12-01T23:41:38.814041+07:00'
+                  updated_at: '2022-12-02T10:58:40.566647+07:00'
+                  installment_status:
+                    installment_status_id: 1
+                    name: on progress
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  lending:
+                    lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                    debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                    loan_period_id: 2
+                    lending_status_id: 3
+                    name: Obat
+                    amount: 1050000
+                    created_at: '2022-12-01T23:41:25.710538+07:00'
+                    updated_at: '2022-12-02T10:46:59.400599+07:00'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:31:58 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '52'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Update Installment Due Date: Installment id not exist'
+                  value:
+                    Message: Installment ID not exist.
+                    Data: null
+                example-1:
+                  summary: 'Update Installment Due Date: Invalid request'
+                  value:
+                    Message: Invalid request.
+                    Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:31:21 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:33:02 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '97'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    due_date: Invalid due date format.
+  /api/v1/admin/payments:
+    get:
+      tags:
+        - admin
+      summary: Get Payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+          example: asc
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          example: payment_amount
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: '0'
+        - name: page
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:35:13 GMT
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  limit: 10
+                  page: 1
+                  sort: payment_amount asc
+                  total_rows: 41
+                  total_pages: 5
+                  rows:
+                    - payment_id: 4c99458a-7211-11ed-94c2-aa665a52e827
+                      installment_id: f65ba488-7210-11ed-94c2-aa665a52e827
+                      voucher_id: 41c17150-7211-11ed-94c2-aa665a52e827
+                      payment_fine: 0
+                      payment_discount: 3500
+                      payment_amount: 346500
+                      payment_date: '2022-12-02T14:16:54.340279+07:00'
+                      installment:
+                        installment_id: f65ba488-7210-11ed-94c2-aa665a52e827
+                        lending_id: 1882422a-7210-11ed-94c2-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2023-01-25T23:59:59.659762+07:00'
+                        created_at: '2022-12-02T14:14:29.659877+07:00'
+                        updated_at: '2022-12-02T14:16:54.354164+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: 1882422a-7210-11ed-94c2-aa665a52e827
+                          debtor_id: 8cf7332a-720d-11ed-94c2-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-02T14:08:17.458788+07:00'
+                          updated_at: '2022-12-02T14:24:34.106229+07:00'
+                    - payment_id: 84fb0556-7173-11ed-a4aa-aa665a52e827
+                      installment_id: 04b4e880-7173-11ed-a4aa-aa665a52e827
+                      voucher_id: 75a528de-7173-11ed-a4aa-aa665a52e827
+                      payment_fine: 0
+                      payment_discount: 3500
+                      payment_amount: 346500
+                      payment_date: '2022-12-01T19:27:28.45144+07:00'
+                      installment:
+                        installment_id: 04b4e880-7173-11ed-a4aa-aa665a52e827
+                        lending_id: 026a29c8-7173-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2023-02-25T23:59:59.2496+07:00'
+                        created_at: '2022-12-01T19:23:53.249805+07:00'
+                        updated_at: '2022-12-01T19:27:28.465961+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: 026a29c8-7173-11ed-a4aa-aa665a52e827
+                          debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T19:23:49.405146+07:00'
+                          updated_at: '2022-12-01T19:30:50.500735+07:00'
+                    - payment_id: 6dc8c00c-71f6-11ed-94c2-aa665a52e827
+                      installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 350000
+                      payment_date: '2022-12-02T11:04:33.605536+07:00'
+                      installment:
+                        installment_id: 06e6bd76-7197-11ed-a4ac-aa665a52e827
+                        lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2022-12-02T23:59:59+07:00'
+                        created_at: '2022-12-01T23:41:38.814041+07:00'
+                        updated_at: '2022-12-02T19:31:54.04851+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T23:41:25.710538+07:00'
+                          updated_at: '2022-12-02T18:13:20.341904+07:00'
+                    - payment_id: 541a4fc2-7232-11ed-9c2c-aa665a52e827
+                      installment_id: 06e6bd6c-7197-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 350000
+                      payment_date: '2022-12-02T18:13:20.322894+07:00'
+                      installment:
+                        installment_id: 06e6bd6c-7197-11ed-a4ac-aa665a52e827
+                        lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2023-02-23T23:59:59+07:00'
+                        created_at: '2022-12-01T23:41:38.814041+07:00'
+                        updated_at: '2022-12-02T18:13:20.338572+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T23:41:25.710538+07:00'
+                          updated_at: '2022-12-02T18:13:20.341904+07:00'
+                    - payment_id: 608a2ef4-7173-11ed-a4aa-aa665a52e827
+                      installment_id: 04b4e876-7173-11ed-a4aa-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 350000
+                      payment_date: '2022-12-01T19:26:27.314635+07:00'
+                      installment:
+                        installment_id: 04b4e876-7173-11ed-a4aa-aa665a52e827
+                        lending_id: 026a29c8-7173-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2023-01-25T23:59:59+07:00'
+                        created_at: '2022-12-01T19:23:53.249805+07:00'
+                        updated_at: '2022-12-01T19:26:27.330007+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: 026a29c8-7173-11ed-a4aa-aa665a52e827
+                          debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T19:23:49.405146+07:00'
+                          updated_at: '2022-12-01T19:30:50.500735+07:00'
+                    - payment_id: f96b6892-71f3-11ed-bfd8-aa665a52e827
+                      installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 0
+                      payment_discount: 0
+                      payment_amount: 350000
+                      payment_date: '2022-12-02T10:46:59.382129+07:00'
+                      installment:
+                        installment_id: 06e6bd58-7197-11ed-a4ac-aa665a52e827
+                        lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2023-01-25T23:59:59.813882+07:00'
+                        created_at: '2022-12-01T23:41:38.814041+07:00'
+                        updated_at: '2022-12-02T10:46:59.397863+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: ff174ade-7196-11ed-a4ac-aa665a52e827
+                          debtor_id: 0375a6a0-7194-11ed-a4aa-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T23:41:25.710538+07:00'
+                          updated_at: '2022-12-02T18:13:20.341904+07:00'
+                    - payment_id: 5ea19240-7212-11ed-94c2-aa665a52e827
+                      installment_id: f65ba49c-7210-11ed-94c2-aa665a52e827
+                      voucher_id: 4b23b3ec-7212-11ed-94c2-aa665a52e827
+                      payment_fine: 5000
+                      payment_discount: 3500
+                      payment_amount: 351500
+                      payment_date: '2022-12-02T14:24:34.093745+07:00'
+                      installment:
+                        installment_id: f65ba49c-7210-11ed-94c2-aa665a52e827
+                        lending_id: 1882422a-7210-11ed-94c2-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2022-12-01T23:59:59+07:00'
+                        created_at: '2022-12-02T14:14:29.659877+07:00'
+                        updated_at: '2022-12-02T14:24:34.105166+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: 1882422a-7210-11ed-94c2-aa665a52e827
+                          debtor_id: 8cf7332a-720d-11ed-94c2-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-02T14:08:17.458788+07:00'
+                          updated_at: '2022-12-02T14:24:34.106229+07:00'
+                    - payment_id: 6fd58a22-7211-11ed-94c2-aa665a52e827
+                      installment_id: f65ba492-7210-11ed-94c2-aa665a52e827
+                      voucher_id: null
+                      payment_fine: 70000
+                      payment_discount: 0
+                      payment_amount: 420000
+                      payment_date: '2022-12-02T14:17:53.459096+07:00'
+                      installment:
+                        installment_id: f65ba492-7210-11ed-94c2-aa665a52e827
+                        lending_id: 1882422a-7210-11ed-94c2-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2022-11-18T23:59:59+07:00'
+                        created_at: '2022-12-02T14:14:29.659877+07:00'
+                        updated_at: '2022-12-02T14:17:53.466383+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: 1882422a-7210-11ed-94c2-aa665a52e827
+                          debtor_id: 8cf7332a-720d-11ed-94c2-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-02T14:08:17.458788+07:00'
+                          updated_at: '2022-12-02T14:24:34.106229+07:00'
+                    - payment_id: fd668434-7173-11ed-a4aa-aa665a52e827
+                      installment_id: 04b4e88a-7173-11ed-a4aa-aa665a52e827
+                      voucher_id: e3fb1ffa-7173-11ed-a4aa-aa665a52e827
+                      payment_fine: 105000
+                      payment_discount: 3500
+                      payment_amount: 451500
+                      payment_date: '2022-12-01T19:30:50.476706+07:00'
+                      installment:
+                        installment_id: 04b4e88a-7173-11ed-a4aa-aa665a52e827
+                        lending_id: 026a29c8-7173-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 350000
+                        due_date: '2022-11-10T23:59:59+07:00'
+                        created_at: '2022-12-01T19:23:53.249805+07:00'
+                        updated_at: '2022-12-01T19:30:50.498086+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: 026a29c8-7173-11ed-a4aa-aa665a52e827
+                          debtor_id: 5030a00a-70b6-11ed-8de0-aa665a52e827
+                          loan_period_id: 2
+                          lending_status_id: 4
+                          name: Obat
+                          amount: 1050000
+                          created_at: '2022-12-01T19:23:49.405146+07:00'
+                          updated_at: '2022-12-01T19:30:50.500735+07:00'
+                    - payment_id: c3fde524-7174-11ed-a4aa-aa665a52e827
+                      installment_id: a374b1ac-7174-11ed-a4aa-aa665a52e827
+                      voucher_id: bcc4d60a-7174-11ed-a4aa-aa665a52e827
+                      payment_fine: 0
+                      payment_discount: 9166
+                      payment_amount: 907501
+                      payment_date: '2022-12-01T19:36:23.662467+07:00'
+                      installment:
+                        installment_id: a374b1ac-7174-11ed-a4aa-aa665a52e827
+                        lending_id: 940b2e76-7174-11ed-a4aa-aa665a52e827
+                        installment_status_id: 2
+                        amount: 916667
+                        due_date: '2023-02-25T23:59:59.083229+07:00'
+                        created_at: '2022-12-01T19:35:29.083479+07:00'
+                        updated_at: '2022-12-01T19:36:23.67719+07:00'
+                        installment_status:
+                          installment_status_id: 2
+                          name: paid
+                          created_at: '2022-11-30T20:51:57.643318+07:00'
+                          updated_at: '0001-01-01T00:00:00Z'
+                        lending:
+                          lending_id: 940b2e76-7174-11ed-a4aa-aa665a52e827
+                          debtor_id: 5504309c-7174-11ed-a4aa-aa665a52e827
+                          loan_period_id: 3
+                          lending_status_id: 4
+                          name: Iphone
+                          amount: 5500000
+                          created_at: '2022-12-01T19:35:03.226198+07:00'
+                          updated_at: '2022-12-01T19:39:19.135963+07:00'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:34:32 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/admin/vouchers:
+    get:
+      tags:
+        - admin
+      summary: Get Vouchers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+          example: asc
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          example: amount
+        - name: limit
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:38:23 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '426'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  limit: 10
+                  page: 1
+                  sort: active_date asc
+                  total_rows: 1
+                  total_pages: 1
+                  rows:
+                    - voucher_id: 9f5f764c-7232-11ed-9c2c-aa665a52e827
+                      name: end year
+                      discount_payment: 1
+                      discount_quota: 1
+                      active_date: '2022-12-02T00:00:00+07:00'
+                      expire_date: '2022-12-02T23:59:59+07:00'
+                      created_at: '2022-12-02T18:15:26.612142+07:00'
+                      updated_at: '2022-12-02T18:15:26.612142+07:00'
+                      deleted_at: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:37:13 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+    post:
+      tags:
+        - admin
+      summary: Create Voucher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Christmas
+                discount_payment: 5
+                discount_quota: 2
+                active_date: 30-11-2022 11:04:00
+                expire_date: 30-11-2022 23:59:00
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:41:02 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '340'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  voucher_id: 94b5f0de-723e-11ed-b33d-aa665a52e827
+                  name: Christmas
+                  discount_payment: 5
+                  discount_quota: 2
+                  active_date: '2022-11-30T11:04:00+07:00'
+                  expire_date: '2022-11-30T23:59:00+07:00'
+                  created_at: '2022-12-02T19:41:02.684688+07:00'
+                  updated_at: '2022-12-02T19:41:02.684688+07:00'
+                  deleted_at: null
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:41:23 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '43'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Invalid request.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:40:33 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:42:08 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '261'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    active_date: Invalid due date format.
+                    discount_payment: Invalid discount format.
+                    discount_quota: Invalid discount format.
+                    expire_date: Invalid due date format.
+                    name: Invalid name format.
+  /api/v1/admin/vouchers/9f5f764c-7232-11ed-9c2c-aa665a52e827:
+    get:
+      tags:
+        - admin
+      summary: Get Voucher By ID
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:39:45 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '339'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  voucher_id: 9f5f764c-7232-11ed-9c2c-aa665a52e827
+                  name: end year
+                  discount_payment: 1
+                  discount_quota: 1
+                  active_date: '2022-12-02T00:00:00+07:00'
+                  expire_date: '2022-12-02T23:59:59+07:00'
+                  created_at: '2022-12-02T18:15:26.612142+07:00'
+                  updated_at: '2022-12-02T18:15:26.612142+07:00'
+                  deleted_at: null
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:39:00 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '48'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Voucher ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:38:41 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+    put:
+      tags:
+        - admin
+      summary: Update Voucher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Christmas Eve
+                discount_payment: 1
+                discount_quota: 1
+                active_date: 02-12-2022 00:00:00
+                expire_date: 02-12-2022 23:59:59
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:48:53 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '344'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  voucher_id: 9f5f764c-7232-11ed-9c2c-aa665a52e827
+                  name: Christmas Eve
+                  discount_payment: 1
+                  discount_quota: 1
+                  active_date: '2022-12-02T00:00:00+07:00'
+                  expire_date: '2022-12-02T23:59:59+07:00'
+                  created_at: '2022-12-02T18:15:26.612142+07:00'
+                  updated_at: '2022-12-02T19:48:53.431138+07:00'
+                  deleted_at: null
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:43:52 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '48'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Update Voucher: voucher id not exist'
+                  value:
+                    Message: Voucher ID not exist.
+                    Data: null
+                example-1:
+                  summary: 'Update Voucher: invalid request'
+                  value:
+                    Message: Invalid request.
+                    Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:42:57 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:46:56 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '261'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    active_date: Invalid due date format.
+                    discount_payment: Invalid discount format.
+                    discount_quota: Invalid discount format.
+                    expire_date: Invalid due date format.
+                    name: Invalid name format.
+    delete:
+      tags:
+        - admin
+      summary: Delete Voucher
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:51:19 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '374'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  voucher_id: 9f5f764c-7232-11ed-9c2c-aa665a52e827
+                  name: Christmas Eve
+                  discount_payment: 1
+                  discount_quota: 1
+                  active_date: '2022-12-02T00:00:00+07:00'
+                  expire_date: '2022-12-02T23:59:59+07:00'
+                  created_at: '2022-12-02T18:15:26.612142+07:00'
+                  updated_at: '2022-12-02T19:48:53.431138+07:00'
+                  deleted_at: '2022-12-02T19:51:19.322075+07:00'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:50:29 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '48'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Voucher ID not exist.
+                Data: null
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 12:50:10 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null
+  /api/v1/auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: emir
+                phone_number: '0898090909'
+                address: Jakarta
+                email: emir2@gmail.com
+                password: Tested8*
+      responses:
+        '201':
+          description: Created
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:08:59 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '274'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  user_id: aa948f1e-71ee-11ed-9fa8-aa665a52e827
+                  role_id: 2
+                  name: emir
+                  phone_number: '0898090909'
+                  address: Jakarta
+                  email: emir2@gmail.com
+                  created_at: '2022-12-02T10:08:59.72208+07:00'
+                  updated_at: '2022-12-02T10:08:59.72208+07:00'
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:03:22 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '47'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: 'Register: Email exists error'
+                  value:
+                    Message: Email already exist.
+                    Data: null
+                example-1:
+                  summary: 'Register: Invalid request error'
+                  value:
+                    Message: Invalid request.
+                    Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:05:54 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '320'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    address: Invalid address format.
+                    email: Invalid email format.
+                    name: Invalid name format.
+                    password: >-
+                      Password must contain at least 8-40 characters,at least 1
+                      number, 1 Upper case, and 1 special character
+                    phone_number: Invalid phone number format.
+  /api/v1/auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: admin@seafund.com
+                password: Tested8*
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:13:44 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '507'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  user:
+                    user_id: 101401ce-4a0f-11ed-9772-acde48001122
+                    role_id: 1
+                    name: admin
+                    phone_number: '911'
+                    address: USA
+                    email: admin@seafund.com
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+                  token: >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEwMTQwMWNlLTRhMGYtMTFlZC05NzcyLWFjZGU0ODAwMTEyMiIsInJvbGVfaWQiOjEsImV4cCI6MTY2OTk1NDQyNCwiaWF0IjoxNjY5OTUwODI0LCJpc3MiOiJpc3N1ZXJmb3Jqd3QifQ.dpq8QbvEK_W88heS7HlZ4SibEpH-AsfMPu0qDk3bnXc
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:10:55 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '43'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Invalid request.
+                Data: null
+        '401':
+          description: Unauthorized
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:50:37 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '55'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Email or password not valid.
+                Data: null
+        '422':
+          description: Unprocessable Entity
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:12:28 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '208'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Request field not valid.
+                Data:
+                  fields:
+                    email: Invalid email format.
+                    password: >-
+                      Password must contain at least 8-40 characters,at least 1
+                      number, 1 Upper case, and 1 special character
+  /api/v1/auth/details:
+    get:
+      tags:
+        - auth
+      summary: User details
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:16:03 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '376'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: success
+                Data:
+                  user_id: 101401ce-4a0f-11ed-9772-acde48001122
+                  role_id: 1
+                  name: admin
+                  phone_number: '911'
+                  address: USA
+                  email: admin@seafund.com
+                  created_at: '2022-11-30T20:51:57.643318+07:00'
+                  updated_at: '0001-01-01T00:00:00Z'
+                  role:
+                    role_id: 1
+                    name: admin
+                    created_at: '2022-11-30T20:51:57.643318+07:00'
+                    updated_at: '0001-01-01T00:00:00Z'
+        '403':
+          description: Forbidden
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Dec 2022 03:14:53 GMT
+            Content-Length:
+              schema:
+                type: integer
+                example: '36'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                Message: Forbidden
+                Data: null

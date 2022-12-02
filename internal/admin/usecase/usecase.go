@@ -201,7 +201,7 @@ func (u *adminUC) UpdateDebtorByID(ctx context.Context, debtorID string, body bo
 	health, err := u.adminRepo.GetCreditHealthByID(ctx, body.CreditHealthID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return debtor, httperror.New(http.StatusBadRequest, response.ContractIDNotExist)
+			return debtor, httperror.New(http.StatusBadRequest, response.CreditIDNotExist)
 		}
 		return debtor, err
 	}
@@ -331,6 +331,9 @@ func (u *adminUC) GetVouchers(ctx context.Context, name string, pagination *util
 func (u *adminUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
 	lending, err := u.adminRepo.GetLoanByID(ctx, lendingID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return lending, httperror.New(http.StatusBadRequest, response.LendingIDNotExist)
+		}
 		return lending, err
 	}
 
