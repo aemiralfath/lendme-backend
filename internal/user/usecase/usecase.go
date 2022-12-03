@@ -212,7 +212,7 @@ func (u *userUC) CreateLoan(ctx context.Context, userID string, body body.Create
 		return lending, err
 	}
 
-	amount := body.Amount * (float64(period.Percentage) / 100)
+	amount := math.Round(body.Amount * (float64(period.Percentage) / 100))
 	switch debtor.CreditHealthID {
 	case 1:
 		if debtor.CreditLimit-(debtor.CreditUsed+amount) < 0 {
