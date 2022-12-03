@@ -4,6 +4,7 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080
+  - url: https://lendme-backend-production.up.railway.app/
 components:
   securitySchemes:
     bearerAuth:
