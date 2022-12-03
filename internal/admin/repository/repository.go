@@ -31,6 +31,10 @@ func (r *adminRepo) GetDebtors(ctx context.Context, name string, pagination *uti
 		Where("users.name ILIKE ? OR users.email ILIKE ?", fmt.Sprintf("%%%s%%", name), fmt.Sprintf("%%%s%%", name)).
 		Count(&totalRows)
 
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = totalPages
+
 	if err := r.db.WithContext(ctx).
 		Joins("inner join users on users.user_id = debtors.user_id").
 		Joins("inner join credit_health_types on credit_health_types.credit_health_id = debtors.credit_health_id").
