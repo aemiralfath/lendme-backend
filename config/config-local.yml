@@ -19,10 +19,10 @@ logger:
   Level: info
 
 postgres:
-  PostgresqlHost: localhost
-  PostgresqlPort: 5432
+  PostgresqlHost: containers-us-west-143.railway.app
+  PostgresqlPort: 7111
   PostgresqlUser: postgres
-  PostgresqlPassword: postgres
-  PostgresqlDbname: p2p_db_emir
+  PostgresqlPassword: LKjzozaMeoKoAETta0Kz
+  PostgresqlDbname: railway
   PostgresqlSslMode: false
   PgDriver: pgx
