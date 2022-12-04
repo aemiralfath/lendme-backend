@@ -4,15 +4,15 @@ import (
 	"context"
 	"final-project-backend/internal/admin/delivery/body"
 	"final-project-backend/internal/models"
-	"final-project-backend/pkg/utils"
+	"final-project-backend/pkg/pagination"
 )
 
 type UseCase interface {
 	GetDebtorByID(ctx context.Context, id string) (*models.Debtor, error)
-	GetDebtors(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
-	GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error)
-	GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
-	GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
+	GetDebtors(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error)
+	GetLoans(ctx context.Context, name string, status []int, pagination *pagination.Pagination) (*pagination.Pagination, error)
+	GetPayments(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error)
+	GetVouchers(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error)
 	GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error)
 	GetInstallmentByID(ctx context.Context, installmentID string) (*models.Installment, error)
 	UpdateDebtorByID(ctx context.Context, debtorID string, body body.UpdateContractRequest) (*models.Debtor, error)

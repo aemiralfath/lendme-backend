@@ -1,9 +1,9 @@
 package body
 
 import (
+	"final-project-backend/internal/utils"
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/response"
-	"final-project-backend/pkg/utils"
 	"net/http"
 	"net/mail"
 	"strings"
