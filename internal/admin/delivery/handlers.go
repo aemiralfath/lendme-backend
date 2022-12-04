@@ -7,8 +7,8 @@ import (
 	"final-project-backend/internal/admin/delivery/body"
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/logger"
+	"final-project-backend/pkg/pagination"
 	"final-project-backend/pkg/response"
-	"final-project-backend/pkg/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -289,7 +289,7 @@ func (h *adminHandlers) GetSummary(c *gin.Context) {
 }
 
 func (h *adminHandlers) GetLoans(c *gin.Context) {
-	pagination := &utils.Pagination{}
+	pagination := &pagination.Pagination{}
 	name, status := h.ValidateQueryLoans(c, pagination)
 
 	loans, err := h.adminUC.GetLoans(c, name, status, pagination)
@@ -308,7 +308,7 @@ func (h *adminHandlers) GetLoans(c *gin.Context) {
 	response.SuccessResponse(c.Writer, loans, http.StatusOK)
 }
 
-func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pagination) (string, []int) {
+func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *pagination.Pagination) (string, []int) {
 	name := strings.TrimSpace(c.Query("name"))
 	status := strings.TrimSpace(c.Query("status"))
 	sort := strings.TrimSpace(c.Query("sort"))
@@ -361,7 +361,7 @@ func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pag
 }
 
 func (h *adminHandlers) GetPayments(c *gin.Context) {
-	pagination := &utils.Pagination{}
+	pagination := &pagination.Pagination{}
 	name := h.ValidateQueryPayments(c, pagination)
 
 	payments, err := h.adminUC.GetPayments(c, name, pagination)
@@ -380,7 +380,7 @@ func (h *adminHandlers) GetPayments(c *gin.Context) {
 	response.SuccessResponse(c.Writer, payments, http.StatusOK)
 }
 
-func (h *adminHandlers) ValidateQueryPayments(c *gin.Context, pagination *utils.Pagination) string {
+func (h *adminHandlers) ValidateQueryPayments(c *gin.Context, pagination *pagination.Pagination) string {
 	name := strings.TrimSpace(c.Query("name"))
 	sort := strings.TrimSpace(c.Query("sort"))
 	sortBy := strings.TrimSpace(c.Query("sortBy"))
@@ -424,7 +424,7 @@ func (h *adminHandlers) ValidateQueryPayments(c *gin.Context, pagination *utils.
 }
 
 func (h *adminHandlers) GetVouchers(c *gin.Context) {
-	pagination := &utils.Pagination{}
+	pagination := &pagination.Pagination{}
 	name := h.ValidateQueryVouchers(c, pagination)
 
 	vouchers, err := h.adminUC.GetVouchers(c, name, pagination)
@@ -443,7 +443,7 @@ func (h *adminHandlers) GetVouchers(c *gin.Context) {
 	response.SuccessResponse(c.Writer, vouchers, http.StatusOK)
 }
 
-func (h *adminHandlers) ValidateQueryVouchers(c *gin.Context, pagination *utils.Pagination) string {
+func (h *adminHandlers) ValidateQueryVouchers(c *gin.Context, pagination *pagination.Pagination) string {
 	name := strings.TrimSpace(c.Query("name"))
 	sort := strings.TrimSpace(c.Query("sort"))
 	sortBy := strings.TrimSpace(c.Query("sortBy"))
@@ -491,7 +491,7 @@ func (h *adminHandlers) ValidateQueryVouchers(c *gin.Context, pagination *utils.
 }
 
 func (h *adminHandlers) GetDebtors(c *gin.Context) {
-	pagination := &utils.Pagination{}
+	pagination := &pagination.Pagination{}
 	name := h.ValidateQueryDebtors(c, pagination)
 
 	debtors, err := h.adminUC.GetDebtors(c, name, pagination)
@@ -510,7 +510,7 @@ func (h *adminHandlers) GetDebtors(c *gin.Context) {
 	response.SuccessResponse(c.Writer, debtors, http.StatusOK)
 }
 
-func (h *adminHandlers) ValidateQueryDebtors(c *gin.Context, pagination *utils.Pagination) string {
+func (h *adminHandlers) ValidateQueryDebtors(c *gin.Context, pagination *pagination.Pagination) string {
 	name := strings.TrimSpace(c.Query("name"))
 	sort := strings.TrimSpace(c.Query("sort"))
 	sortBy := strings.TrimSpace(c.Query("sortBy"))

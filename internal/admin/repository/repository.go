@@ -4,7 +4,7 @@ import (
 	"context"
 	"final-project-backend/internal/admin"
 	"final-project-backend/internal/models"
-	"final-project-backend/pkg/utils"
+	"final-project-backend/pkg/pagination"
 	"fmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -20,7 +20,7 @@ func NewAdminRepository(db *gorm.DB) admin.Repository {
 	return &adminRepo{db: db}
 }
 
-func (r *adminRepo) GetDebtors(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (r *adminRepo) GetDebtors(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	var debtors []*models.Debtor
 
 	var totalRows int64
@@ -258,7 +258,7 @@ func (r *adminRepo) GetUserAction(ctx context.Context) ([]*models.Debtor, error)
 	return users, nil
 }
 
-func (r *adminRepo) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (r *adminRepo) GetLoans(ctx context.Context, name string, status []int, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	var loans []*models.Lending
 
 	var totalRows int64
@@ -284,7 +284,7 @@ func (r *adminRepo) GetLoans(ctx context.Context, name string, status []int, pag
 	return pagination, nil
 }
 
-func (r *adminRepo) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (r *adminRepo) GetVouchers(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	var rows []*models.Voucher
 	var vouchers []*models.Voucher
 
@@ -319,7 +319,7 @@ func (r *adminRepo) GetVouchers(ctx context.Context, name string, pagination *ut
 	return pagination, nil
 }
 
-func (r *adminRepo) GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (r *adminRepo) GetPayments(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	var payments []*models.Payment
 
 	var totalRows int64

@@ -8,8 +8,8 @@ import (
 	"final-project-backend/internal/admin/mocks"
 	"final-project-backend/internal/models"
 	"final-project-backend/pkg/httperror"
+	"final-project-backend/pkg/pagination"
 	"final-project-backend/pkg/response"
-	"final-project-backend/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
@@ -26,14 +26,14 @@ func TestAdminUC_GetDebtors(t *testing.T) {
 		{
 			name: "success",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetDebtors", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				r.On("GetDebtors", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expectedErr: nil,
 		},
 		{
 			name: "error",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetDebtors", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, errors.New("test"))
+				r.On("GetDebtors", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, errors.New("test"))
 			},
 			expectedErr: errors.New("test"),
 		},
@@ -45,7 +45,7 @@ func TestAdminUC_GetDebtors(t *testing.T) {
 			u := NewAdminUseCase(&config.Config{}, r)
 
 			tc.mock(t, r)
-			_, err := u.GetDebtors(context.Background(), "name", &utils.Pagination{})
+			_, err := u.GetDebtors(context.Background(), "name", &pagination.Pagination{})
 			if err != nil {
 				assert.Equal(t, err.Error(), tc.expectedErr.Error())
 			}
@@ -62,14 +62,14 @@ func TestAdminUC_GetPayments(t *testing.T) {
 		{
 			name: "success",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetPayments", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				r.On("GetPayments", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expectedErr: nil,
 		},
 		{
 			name: "error",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetPayments", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, errors.New("test"))
+				r.On("GetPayments", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, errors.New("test"))
 			},
 			expectedErr: errors.New("test"),
 		},
@@ -81,7 +81,7 @@ func TestAdminUC_GetPayments(t *testing.T) {
 			u := NewAdminUseCase(&config.Config{}, r)
 
 			tc.mock(t, r)
-			_, err := u.GetPayments(context.Background(), "name", &utils.Pagination{})
+			_, err := u.GetPayments(context.Background(), "name", &pagination.Pagination{})
 			if err != nil {
 				assert.Equal(t, err.Error(), tc.expectedErr.Error())
 			}
@@ -98,14 +98,14 @@ func TestAdminUC_GetVouchers(t *testing.T) {
 		{
 			name: "success",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				r.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expectedErr: nil,
 		},
 		{
 			name: "error",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, errors.New("test"))
+				r.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, errors.New("test"))
 			},
 			expectedErr: errors.New("test"),
 		},
@@ -117,7 +117,7 @@ func TestAdminUC_GetVouchers(t *testing.T) {
 			u := NewAdminUseCase(&config.Config{}, r)
 
 			tc.mock(t, r)
-			_, err := u.GetVouchers(context.Background(), "name", &utils.Pagination{})
+			_, err := u.GetVouchers(context.Background(), "name", &pagination.Pagination{})
 			if err != nil {
 				assert.Equal(t, err.Error(), tc.expectedErr.Error())
 			}
@@ -134,14 +134,14 @@ func TestAdminUC_GetLoans(t *testing.T) {
 		{
 			name: "success",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				r.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expectedErr: nil,
 		},
 		{
 			name: "error",
 			mock: func(t *testing.T, r *mocks.Repository) {
-				r.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, errors.New("test"))
+				r.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, errors.New("test"))
 			},
 			expectedErr: errors.New("test"),
 		},
@@ -153,7 +153,7 @@ func TestAdminUC_GetLoans(t *testing.T) {
 			u := NewAdminUseCase(&config.Config{}, r)
 
 			tc.mock(t, r)
-			_, err := u.GetLoans(context.Background(), "name", []int{}, &utils.Pagination{})
+			_, err := u.GetLoans(context.Background(), "name", []int{}, &pagination.Pagination{})
 			if err != nil {
 				assert.Equal(t, err.Error(), tc.expectedErr.Error())
 			}

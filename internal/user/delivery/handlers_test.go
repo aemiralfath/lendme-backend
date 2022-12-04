@@ -10,7 +10,7 @@ import (
 	"final-project-backend/internal/user/mocks"
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/logger"
-	"final-project-backend/pkg/utils"
+	"final-project-backend/pkg/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -725,7 +725,7 @@ func TestUserHandlers_GetLoans(t *testing.T) {
 			name:   "success",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -734,7 +734,7 @@ func TestUserHandlers_GetLoans(t *testing.T) {
 			name:   "success using filter",
 			filter: "?sortBy=amount&sort=asc&status=history",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -743,7 +743,7 @@ func TestUserHandlers_GetLoans(t *testing.T) {
 			name:   "custom error",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, httperror.New(http.StatusBadRequest, "test"))
+				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, httperror.New(http.StatusBadRequest, "test"))
 			},
 			expected:     http.StatusBadRequest,
 			unauthorized: true,
@@ -752,7 +752,7 @@ func TestUserHandlers_GetLoans(t *testing.T) {
 			name:   "internal server error",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, errors.New("test"))
+				s.On("GetLoans", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, errors.New("test"))
 			},
 			expected:     http.StatusInternalServerError,
 			unauthorized: true,
@@ -818,7 +818,7 @@ func TestUserHandlers_GetVouchers(t *testing.T) {
 			name:   "success",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -827,7 +827,7 @@ func TestUserHandlers_GetVouchers(t *testing.T) {
 			name:   "success using filter",
 			filter: "?sortBy=amount&sort=asc&status=history",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -836,7 +836,7 @@ func TestUserHandlers_GetVouchers(t *testing.T) {
 			name:   "success using filter",
 			filter: "?sortBy=discount_quota&sort=asc&status=history",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -845,7 +845,7 @@ func TestUserHandlers_GetVouchers(t *testing.T) {
 			name:   "success using filter",
 			filter: "?sortBy=discount_payment&sort=asc&status=history",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -854,7 +854,7 @@ func TestUserHandlers_GetVouchers(t *testing.T) {
 			name:   "success using filter",
 			filter: "?sortBy=expire_date&sort=asc&status=history",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -863,7 +863,7 @@ func TestUserHandlers_GetVouchers(t *testing.T) {
 			name:   "custom error",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, httperror.New(http.StatusBadRequest, "test"))
+				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, httperror.New(http.StatusBadRequest, "test"))
 			},
 			expected:     http.StatusBadRequest,
 			unauthorized: true,
@@ -872,7 +872,7 @@ func TestUserHandlers_GetVouchers(t *testing.T) {
 			name:   "internal server error",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, errors.New("test"))
+				s.On("GetVouchers", mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, errors.New("test"))
 			},
 			expected:     http.StatusInternalServerError,
 			unauthorized: true,
@@ -931,7 +931,7 @@ func TestUserHandlers_GetPayments(t *testing.T) {
 			name:   "success",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -940,7 +940,7 @@ func TestUserHandlers_GetPayments(t *testing.T) {
 			name:   "success using filter",
 			filter: "?sortBy=payment_amount&sort=asc&status=history",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, nil)
+				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, nil)
 			},
 			expected:     http.StatusOK,
 			unauthorized: true,
@@ -949,7 +949,7 @@ func TestUserHandlers_GetPayments(t *testing.T) {
 			name:   "custom error",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, httperror.New(http.StatusBadRequest, "test"))
+				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, httperror.New(http.StatusBadRequest, "test"))
 			},
 			expected:     http.StatusBadRequest,
 			unauthorized: true,
@@ -958,7 +958,7 @@ func TestUserHandlers_GetPayments(t *testing.T) {
 			name:   "internal server error",
 			filter: "",
 			mock: func(s *mocks.UseCase) {
-				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&utils.Pagination{}, errors.New("test"))
+				s.On("GetPayments", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&pagination.Pagination{}, errors.New("test"))
 			},
 			expected:     http.StatusInternalServerError,
 			unauthorized: true,

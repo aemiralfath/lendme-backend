@@ -7,8 +7,8 @@ import (
 	"final-project-backend/internal/auth/delivery/body"
 	"final-project-backend/internal/models"
 	"final-project-backend/pkg/httperror"
+	"final-project-backend/pkg/jwt"
 	"final-project-backend/pkg/response"
-	"final-project-backend/pkg/utils"
 	"net/http"
 )
 
@@ -72,7 +72,7 @@ func (u *authUC) Login(ctx context.Context, body body.LoginRequest) (*models.Use
 
 	foundUser.SanitizePassword()
 
-	token, err := utils.GenerateJWTToken(foundUser.UserID.String(), foundUser.RoleID, u.cfg)
+	token, err := jwt.GenerateJWTToken(foundUser.UserID.String(), foundUser.RoleID, u.cfg)
 	if err != nil {
 		return nil, err
 	}

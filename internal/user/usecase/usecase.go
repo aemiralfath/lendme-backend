@@ -7,8 +7,8 @@ import (
 	"final-project-backend/internal/user"
 	"final-project-backend/internal/user/delivery/body"
 	"final-project-backend/pkg/httperror"
+	"final-project-backend/pkg/pagination"
 	"final-project-backend/pkg/response"
-	"final-project-backend/pkg/utils"
 	"gorm.io/gorm"
 	"math"
 	"net/http"
@@ -60,7 +60,7 @@ func (u *userUC) GetDebtorDetails(ctx context.Context, userID string) (*models.D
 	return debtor, nil
 }
 
-func (u *userUC) GetLoans(ctx context.Context, userID, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (u *userUC) GetLoans(ctx context.Context, userID, name string, status []int, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -76,7 +76,7 @@ func (u *userUC) GetLoans(ctx context.Context, userID, name string, status []int
 	return loans, nil
 }
 
-func (u *userUC) GetPayments(ctx context.Context, userID, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (u *userUC) GetPayments(ctx context.Context, userID, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -93,7 +93,7 @@ func (u *userUC) GetPayments(ctx context.Context, userID, name string, paginatio
 	return payments, nil
 }
 
-func (u *userUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (u *userUC) GetVouchers(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	vouchers, err := u.userRepo.GetVouchers(ctx, name, pagination)
 	if err != nil {
 		return vouchers, err

@@ -3,15 +3,15 @@ package admin
 import (
 	"context"
 	"final-project-backend/internal/models"
-	"final-project-backend/pkg/utils"
+	"final-project-backend/pkg/pagination"
 )
 
 type Repository interface {
-	GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error)
-	GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
-	GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
+	GetLoans(ctx context.Context, name string, status []int, pagination *pagination.Pagination) (*pagination.Pagination, error)
+	GetPayments(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error)
+	GetVouchers(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error)
 	GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error)
-	GetDebtors(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error)
+	GetDebtors(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error)
 	GetDebtorByID(ctx context.Context, debtorID string) (*models.Debtor, error)
 	GetLendingByID(ctx context.Context, lendingID string) (*models.Lending, error)
 	GetLendingWithInstallmentByID(ctx context.Context, lendingID string) (*models.Lending, error)

@@ -1,4 +1,4 @@
-package utils
+package pagination
 
 type Pagination struct {
 	Limit      int         `json:"limit,omitempty;query:limit"`

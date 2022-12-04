@@ -7,8 +7,8 @@ import (
 	"final-project-backend/internal/admin/delivery/body"
 	"final-project-backend/internal/models"
 	"final-project-backend/pkg/httperror"
+	"final-project-backend/pkg/pagination"
 	"final-project-backend/pkg/response"
-	"final-project-backend/pkg/utils"
 	"gorm.io/gorm"
 	"math"
 	"net/http"
@@ -24,7 +24,7 @@ func NewAdminUseCase(cfg *config.Config, adminRepo admin.Repository) admin.UseCa
 	return &adminUC{cfg: cfg, adminRepo: adminRepo}
 }
 
-func (u *adminUC) GetDebtors(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (u *adminUC) GetDebtors(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	debtors, err := u.adminRepo.GetDebtors(ctx, name, pagination)
 	if err != nil {
 		return debtors, err
@@ -69,7 +69,7 @@ func (u *adminUC) GetVoucherByID(ctx context.Context, id string) (*models.Vouche
 	return voucher, nil
 }
 
-func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	loans, err := u.adminRepo.GetLoans(ctx, name, status, pagination)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagin
 	return loans, nil
 }
 
-func (u *adminUC) GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (u *adminUC) GetPayments(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	payments, err := u.adminRepo.GetPayments(ctx, name, pagination)
 	if err != nil {
 		return payments, err
@@ -86,7 +86,7 @@ func (u *adminUC) GetPayments(ctx context.Context, name string, pagination *util
 	return payments, nil
 }
 
-func (u *adminUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+func (u *adminUC) GetVouchers(ctx context.Context, name string, pagination *pagination.Pagination) (*pagination.Pagination, error) {
 	vouchers, err := u.adminRepo.GetVouchers(ctx, name, pagination)
 	if err != nil {
 		return vouchers, err
