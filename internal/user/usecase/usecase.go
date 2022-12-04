@@ -9,7 +9,6 @@ import (
 	"final-project-backend/pkg/httperror"
 	"final-project-backend/pkg/response"
 	"final-project-backend/pkg/utils"
-	"fmt"
 	"gorm.io/gorm"
 	"math"
 	"net/http"
@@ -49,6 +48,175 @@ func (u *userUC) GetInstallmentByID(ctx context.Context, id string) (*models.Ins
 	return installment, nil
 }
 
+func (u *userUC) GetDebtorDetails(ctx context.Context, userID string) (*models.Debtor, error) {
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
+		return nil, err
+	}
+
+	return debtor, nil
+}
+
+func (u *userUC) GetLoans(ctx context.Context, userID, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
+		return nil, err
+	}
+
+	loans, err := u.userRepo.GetLoans(ctx, debtor.DebtorID.String(), name, status, pagination)
+	if err != nil {
+		return nil, err
+	}
+	return loans, nil
+}
+
+func (u *userUC) GetPayments(ctx context.Context, userID, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
+		return nil, err
+	}
+
+	payments, err := u.userRepo.GetPayments(ctx, debtor.DebtorID.String(), name, pagination)
+	if err != nil {
+		return payments, err
+	}
+
+	return payments, nil
+}
+
+func (u *userUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	vouchers, err := u.userRepo.GetVouchers(ctx, name, pagination)
+	if err != nil {
+		return vouchers, err
+	}
+
+	return vouchers, nil
+}
+
+func (u *userUC) ConfirmContract(ctx context.Context, userID string) (*models.Debtor, error) {
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
+		return nil, err
+	}
+
+	if debtor.ContractTrackingID == 5 {
+		return debtor, httperror.New(http.StatusBadRequest, response.ContractAlreadyAccepted)
+	}
+
+	if debtor.ContractTrackingID != 4 {
+		return debtor, httperror.New(http.StatusBadRequest, response.ContractNotAccepted)
+	}
+
+	debtor.ContractTrackingID = 5
+	debtor, err = u.userRepo.UpdateDebtorByID(ctx, debtor)
+	if err != nil {
+		return nil, err
+	}
+
+	return debtor, nil
+}
+
+func (u *userUC) UpdateUserByID(ctx context.Context, userID string, body body.UpdateUserRequest) (*models.User, error) {
+	user, err := u.userRepo.GetUserDetailsByID(ctx, userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return user, httperror.New(http.StatusBadRequest, response.UserIDNotExist)
+		}
+		return user, err
+	}
+
+	if user.Email != body.Email {
+		existsUser, err := u.userRepo.CheckEmailExist(ctx, body.Email)
+		if existsUser.Email != "" {
+			return nil, httperror.New(http.StatusBadRequest, response.EmailAlreadyExistMessage)
+		}
+
+		if err != nil && err != gorm.ErrRecordNotFound {
+			return user, err
+		}
+	}
+
+	user.Name = body.Name
+	user.PhoneNumber = body.PhoneNumber
+	user.Address = body.Address
+	user.Email = body.Email
+	user, err = u.userRepo.UpdateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userUC) CreateLoan(ctx context.Context, userID string, body body.CreateLoan) (*models.Lending, error) {
+	lending := &models.Lending{}
+	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
+		return lending, err
+	}
+
+	if debtor.ContractTrackingID != 5 {
+		return lending, httperror.New(http.StatusBadRequest, response.ContractNotConfirmed)
+	}
+
+	period, err := u.userRepo.GetLoanPeriodByID(ctx, body.LoadPeriodID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return lending, httperror.New(http.StatusBadRequest, response.LoanPeriodNotExist)
+		}
+		return lending, err
+	}
+
+	amount := math.Round(body.Amount * (float64(period.Percentage) / 100))
+	switch debtor.CreditHealthID {
+	case 1:
+		if debtor.CreditLimit-(debtor.CreditUsed+amount) < 0 {
+			return lending, httperror.New(http.StatusBadRequest, response.LoanAmountExceedCreditLimit)
+		}
+	case 2:
+		if (debtor.CreditLimit*(float64(80)/100))-(debtor.CreditUsed+amount) < 0 {
+			return lending, httperror.New(http.StatusBadRequest, response.LoanAmountExceedCreditLimitWarning)
+		}
+	case 3:
+		return lending, httperror.New(http.StatusBadRequest, response.CreditHealthStatusBlocked)
+	}
+
+	lending.DebtorID = debtor.DebtorID
+	lending.LoanPeriodID = period.LoanPeriodID
+	lending.Name = body.Name
+	lending.Amount = amount
+	if err = lending.PrepareCreate(); err != nil {
+		return lending, err
+	}
+
+	createdLending, err := u.userRepo.CreateLending(ctx, lending)
+	if err != nil {
+		return nil, err
+	}
+
+	debtor.CreditUsed = debtor.CreditUsed + amount
+	if _, err := u.userRepo.UpdateDebtorByID(ctx, debtor); err != nil {
+		return nil, err
+	}
+
+	return createdLending, nil
+}
+
 func (u *userUC) CreatePayment(ctx context.Context, userID, installmentID string, body body.CreatePayment) (*models.Payment, error) {
 	delay := 0
 	payment := &models.Payment{}
@@ -58,6 +226,9 @@ func (u *userUC) CreatePayment(ctx context.Context, userID, installmentID string
 
 	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, httperror.New(http.StatusBadRequest, response.DebtorIDNotExist)
+		}
 		return payment, err
 	}
 
@@ -81,8 +252,6 @@ func (u *userUC) CreatePayment(ctx context.Context, userID, installmentID string
 		return payment, httperror.New(http.StatusBadRequest, response.InstallmentAlreadyPaid)
 	}
 
-	fmt.Println(lending.DebtorID)
-	fmt.Println(debtor.DebtorID)
 	if lending.DebtorID != debtor.DebtorID {
 		return payment, httperror.New(http.StatusBadRequest, response.LendingInstallmentNotMatch)
 	}
@@ -191,158 +360,4 @@ func (u *userUC) CreatePayment(ctx context.Context, userID, installmentID string
 	}
 
 	return payment, nil
-}
-
-func (u *userUC) CreateLoan(ctx context.Context, userID string, body body.CreateLoan) (*models.Lending, error) {
-	lending := &models.Lending{}
-	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
-	if err != nil {
-		return lending, err
-	}
-
-	if debtor.ContractTrackingID != 5 {
-		return lending, httperror.New(http.StatusBadRequest, response.ContractNotConfirmed)
-	}
-
-	period, err := u.userRepo.GetLoanPeriodByID(ctx, body.LoadPeriodID)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return lending, httperror.New(http.StatusBadRequest, response.LoanPeriodNotExist)
-		}
-		return lending, err
-	}
-
-	amount := math.Round(body.Amount * (float64(period.Percentage) / 100))
-	switch debtor.CreditHealthID {
-	case 1:
-		if debtor.CreditLimit-(debtor.CreditUsed+amount) < 0 {
-			return lending, httperror.New(http.StatusBadRequest, response.LoanAmountExceedCreditLimit)
-		}
-	case 2:
-		if (debtor.CreditLimit*(float64(80)/100))-(debtor.CreditUsed+amount) < 0 {
-			return lending, httperror.New(http.StatusBadRequest, response.LoanAmountExceedCreditLimitWarning)
-		}
-	case 3:
-		return lending, httperror.New(http.StatusBadRequest, response.CreditHealthStatusBlocked)
-	}
-
-	lending.DebtorID = debtor.DebtorID
-	lending.LoanPeriodID = period.LoanPeriodID
-	lending.Name = body.Name
-	lending.Amount = amount
-	if err = lending.PrepareCreate(); err != nil {
-		return lending, err
-	}
-
-	createdLending, err := u.userRepo.CreateLending(ctx, lending)
-	if err != nil {
-		return nil, err
-	}
-
-	debtor.CreditUsed = debtor.CreditUsed + amount
-	if _, err := u.userRepo.UpdateDebtorByID(ctx, debtor); err != nil {
-		return nil, err
-	}
-
-	return createdLending, nil
-}
-
-func (u *userUC) ConfirmContract(ctx context.Context, userID string) (*models.Debtor, error) {
-	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	if debtor.ContractTrackingID == 5 {
-		return debtor, httperror.New(http.StatusBadRequest, response.ContractAlreadyAccepted)
-	}
-
-	if debtor.ContractTrackingID != 4 {
-		return debtor, httperror.New(http.StatusBadRequest, response.ContractNotAccepted)
-	}
-
-	debtor.ContractTrackingID = 5
-	debtor, err = u.userRepo.UpdateDebtorByID(ctx, debtor)
-	if err != nil {
-		return nil, err
-	}
-
-	return debtor, nil
-}
-
-func (u *userUC) UpdateUserByID(ctx context.Context, userID string, body body.UpdateUserRequest) (*models.User, error) {
-	user, err := u.userRepo.GetUserDetailsByID(ctx, userID)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return user, httperror.New(http.StatusBadRequest, response.UserIDNotExist)
-		}
-		return user, err
-	}
-
-	if user.Email != body.Email {
-		existsUser, err := u.userRepo.CheckEmailExist(ctx, body.Email)
-		if existsUser.Email != "" {
-			return nil, httperror.New(http.StatusBadRequest, response.EmailAlreadyExistMessage)
-		}
-
-		if err != gorm.ErrRecordNotFound {
-			return user, err
-		}
-	}
-
-	user.Name = body.Name
-	user.PhoneNumber = body.PhoneNumber
-	user.Address = body.Address
-	user.Email = body.Email
-	user, err = u.userRepo.UpdateUser(ctx, user)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
-}
-
-func (u *userUC) GetDebtorDetails(ctx context.Context, userID string) (*models.Debtor, error) {
-	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return debtor, nil
-}
-
-func (u *userUC) GetLoans(ctx context.Context, userID, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
-	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	loans, err := u.userRepo.GetLoans(ctx, debtor.DebtorID.String(), name, status, pagination)
-	if err != nil {
-		return nil, err
-	}
-	return loans, nil
-}
-
-func (u *userUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
-	vouchers, err := u.userRepo.GetVouchers(ctx, name, pagination)
-	if err != nil {
-		return vouchers, err
-	}
-
-	return vouchers, nil
-}
-
-func (u *userUC) GetPayments(ctx context.Context, userID, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
-	debtor, err := u.userRepo.GetDebtorDetailsByID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	payments, err := u.userRepo.GetPayments(ctx, debtor.DebtorID.String(), name, pagination)
-	if err != nil {
-		return payments, err
-	}
-
-	return payments, nil
 }
