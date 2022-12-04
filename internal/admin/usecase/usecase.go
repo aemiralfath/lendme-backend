@@ -69,6 +69,44 @@ func (u *adminUC) GetVoucherByID(ctx context.Context, id string) (*models.Vouche
 	return voucher, nil
 }
 
+func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
+	loans, err := u.adminRepo.GetLoans(ctx, name, status, pagination)
+	if err != nil {
+		return nil, err
+	}
+	return loans, nil
+}
+
+func (u *adminUC) GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	payments, err := u.adminRepo.GetPayments(ctx, name, pagination)
+	if err != nil {
+		return payments, err
+	}
+
+	return payments, nil
+}
+
+func (u *adminUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
+	vouchers, err := u.adminRepo.GetVouchers(ctx, name, pagination)
+	if err != nil {
+		return vouchers, err
+	}
+
+	return vouchers, nil
+}
+
+func (u *adminUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
+	lending, err := u.adminRepo.GetLoanByID(ctx, lendingID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return lending, httperror.New(http.StatusBadRequest, response.LendingIDNotExist)
+		}
+		return lending, err
+	}
+
+	return lending, nil
+}
+
 func (u *adminUC) GetSummary(ctx context.Context) (*body.SummaryResponse, error) {
 	response := &body.SummaryResponse{
 		LendingAmount: 0,
@@ -294,48 +332,9 @@ func (u *adminUC) DeleteVoucherByID(ctx context.Context, voucherID string) (*mod
 		return voucher, err
 	}
 
-	err = u.adminRepo.DeleteVoucher(ctx, voucher)
 	if err := u.adminRepo.DeleteVoucher(ctx, voucher); err != nil {
 		return voucher, err
 	}
 
 	return voucher, nil
-}
-
-func (u *adminUC) GetLoans(ctx context.Context, name string, status []int, pagination *utils.Pagination) (*utils.Pagination, error) {
-	loans, err := u.adminRepo.GetLoans(ctx, name, status, pagination)
-	if err != nil {
-		return nil, err
-	}
-	return loans, nil
-}
-
-func (u *adminUC) GetPayments(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
-	payments, err := u.adminRepo.GetPayments(ctx, name, pagination)
-	if err != nil {
-		return payments, err
-	}
-
-	return payments, nil
-}
-
-func (u *adminUC) GetVouchers(ctx context.Context, name string, pagination *utils.Pagination) (*utils.Pagination, error) {
-	vouchers, err := u.adminRepo.GetVouchers(ctx, name, pagination)
-	if err != nil {
-		return vouchers, err
-	}
-
-	return vouchers, nil
-}
-
-func (u *adminUC) GetLoanByID(ctx context.Context, lendingID string) (*models.Lending, error) {
-	lending, err := u.adminRepo.GetLoanByID(ctx, lendingID)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return lending, httperror.New(http.StatusBadRequest, response.LendingIDNotExist)
-		}
-		return lending, err
-	}
-
-	return lending, nil
 }
