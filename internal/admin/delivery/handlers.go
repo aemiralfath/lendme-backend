@@ -26,6 +26,143 @@ func NewAdminHandlers(cfg *config.Config, adminUC admin.UseCase, log logger.Logg
 	return &adminHandlers{cfg: cfg, adminUC: adminUC, logger: log}
 }
 
+func (h *adminHandlers) CreateVoucher(c *gin.Context) {
+	var requestBody body.CreateVoucherRequest
+	if err := c.ShouldBind(&requestBody); err != nil {
+		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
+		return
+	}
+
+	invalidFields, err := requestBody.Validate()
+	if err != nil {
+		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
+		return
+	}
+
+	voucher, err := h.adminUC.CreateVoucher(c, requestBody)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
+}
+
+func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
+	id := c.Param("id")
+	var requestBody body.UpdateContractRequest
+	if err := c.ShouldBind(&requestBody); err != nil {
+		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
+		return
+	}
+
+	invalidFields, err := requestBody.Validate()
+	if err != nil {
+		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
+		return
+	}
+
+	debtor, err := h.adminUC.UpdateDebtorByID(c, id, requestBody)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
+}
+
+func (h *adminHandlers) UpdateVoucher(c *gin.Context) {
+	id := c.Param("id")
+	var requestBody body.UpdateVoucherRequest
+	if err := c.ShouldBind(&requestBody); err != nil {
+		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
+		return
+	}
+
+	invalidFields, err := requestBody.Validate()
+	if err != nil {
+		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
+		return
+	}
+
+	voucher, err := h.adminUC.UpdateVoucherByID(c, id, requestBody)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
+}
+
+func (h *adminHandlers) UpdateInstallmentByID(c *gin.Context) {
+	id := c.Param("id")
+	var requestBody body.UpdateInstallmentRequest
+	if err := c.ShouldBind(&requestBody); err != nil {
+		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
+		return
+	}
+
+	invalidFields, err := requestBody.Validate()
+	if err != nil {
+		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
+		return
+	}
+
+	installment, err := h.adminUC.UpdateInstallmentByID(c, id, requestBody)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, installment, http.StatusOK)
+}
+
+func (h *adminHandlers) DeleteVoucher(c *gin.Context) {
+	id := c.Param("id")
+	voucher, err := h.adminUC.DeleteVoucherByID(c, id)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
+}
+
 func (h *adminHandlers) GetDebtorByID(c *gin.Context) {
 	id := c.Param("id")
 	debtor, err := h.adminUC.GetDebtorByID(c, id)
@@ -98,146 +235,9 @@ func (h *adminHandlers) RejectLoan(c *gin.Context) {
 	response.SuccessResponse(c.Writer, lending, http.StatusOK)
 }
 
-func (h *adminHandlers) UpdateDebtorByID(c *gin.Context) {
-	id := c.Param("id")
-	var requestBody body.UpdateContractRequest
-	if err := c.ShouldBind(&requestBody); err != nil {
-		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
-		return
-	}
-
-	invalidFields, err := requestBody.Validate()
-	if err != nil {
-		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
-		return
-	}
-
-	debtor, err := h.adminUC.UpdateDebtorByID(c, id, requestBody)
-	if err != nil {
-		var e *httperror.Error
-		if !errors.As(err, &e) {
-			h.logger.Errorf("HandlerRegister, Error: %s", err)
-			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
-			return
-		}
-
-		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
-		return
-	}
-
-	response.SuccessResponse(c.Writer, debtor, http.StatusOK)
-}
-
-func (h *adminHandlers) UpdateVoucher(c *gin.Context) {
-	id := c.Param("id")
-	var requestBody body.UpdateVoucherRequest
-	if err := c.ShouldBind(&requestBody); err != nil {
-		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
-		return
-	}
-
-	invalidFields, err := requestBody.Validate()
-	if err != nil {
-		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
-		return
-	}
-
-	voucher, err := h.adminUC.UpdateVoucherByID(c, id, requestBody)
-	if err != nil {
-		var e *httperror.Error
-		if !errors.As(err, &e) {
-			h.logger.Errorf("HandlerRegister, Error: %s", err)
-			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
-			return
-		}
-
-		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
-		return
-	}
-
-	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
-}
-
-func (h *adminHandlers) CreateVoucher(c *gin.Context) {
-	var requestBody body.CreateVoucherRequest
-	if err := c.ShouldBind(&requestBody); err != nil {
-		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
-		return
-	}
-
-	invalidFields, err := requestBody.Validate()
-	if err != nil {
-		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
-		return
-	}
-
-	voucher, err := h.adminUC.CreateVoucher(c, requestBody)
-	if err != nil {
-		var e *httperror.Error
-		if !errors.As(err, &e) {
-			h.logger.Errorf("HandlerRegister, Error: %s", err)
-			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
-			return
-		}
-
-		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
-		return
-	}
-
-	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
-}
-
-func (h *adminHandlers) DeleteVoucher(c *gin.Context) {
-	id := c.Param("id")
-	voucher, err := h.adminUC.DeleteVoucherByID(c, id)
-	if err != nil {
-		var e *httperror.Error
-		if !errors.As(err, &e) {
-			h.logger.Errorf("HandlerRegister, Error: %s", err)
-			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
-			return
-		}
-
-		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
-		return
-	}
-
-	response.SuccessResponse(c.Writer, voucher, http.StatusOK)
-}
-
 func (h *adminHandlers) GetInstallmentByID(c *gin.Context) {
 	id := c.Param("id")
 	installment, err := h.adminUC.GetInstallmentByID(c, id)
-	if err != nil {
-		var e *httperror.Error
-		if !errors.As(err, &e) {
-			h.logger.Errorf("HandlerRegister, Error: %s", err)
-			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
-			return
-		}
-
-		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
-		return
-	}
-
-	response.SuccessResponse(c.Writer, installment, http.StatusOK)
-}
-
-func (h *adminHandlers) UpdateInstallmentByID(c *gin.Context) {
-	id := c.Param("id")
-	var requestBody body.UpdateInstallmentRequest
-	if err := c.ShouldBind(&requestBody); err != nil {
-		response.ErrorResponse(c.Writer, response.BadRequestMessage, http.StatusBadRequest)
-		return
-	}
-
-	invalidFields, err := requestBody.Validate()
-	if err != nil {
-		response.ErrorResponseData(c.Writer, invalidFields, response.UnprocessableEntityMessage, http.StatusUnprocessableEntity)
-		return
-	}
-
-	installment, err := h.adminUC.UpdateInstallmentByID(c, id, requestBody)
 	if err != nil {
 		var e *httperror.Error
 		if !errors.As(err, &e) {
@@ -271,6 +271,23 @@ func (h *adminHandlers) GetLoanByID(c *gin.Context) {
 	response.SuccessResponse(c.Writer, loan, http.StatusOK)
 }
 
+func (h *adminHandlers) GetSummary(c *gin.Context) {
+	summary, err := h.adminUC.GetSummary(c)
+	if err != nil {
+		var e *httperror.Error
+		if !errors.As(err, &e) {
+			h.logger.Errorf("HandlerRegister, Error: %s", err)
+			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
+			return
+		}
+
+		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
+		return
+	}
+
+	response.SuccessResponse(c.Writer, summary, http.StatusOK)
+}
+
 func (h *adminHandlers) GetLoans(c *gin.Context) {
 	pagination := &utils.Pagination{}
 	name, status := h.ValidateQueryLoans(c, pagination)
@@ -289,23 +306,6 @@ func (h *adminHandlers) GetLoans(c *gin.Context) {
 	}
 
 	response.SuccessResponse(c.Writer, loans, http.StatusOK)
-}
-
-func (h *adminHandlers) GetSummary(c *gin.Context) {
-	summary, err := h.adminUC.GetSummary(c)
-	if err != nil {
-		var e *httperror.Error
-		if !errors.As(err, &e) {
-			h.logger.Errorf("HandlerRegister, Error: %s", err)
-			response.ErrorResponse(c.Writer, response.InternalServerErrorMessage, http.StatusInternalServerError)
-			return
-		}
-
-		response.ErrorResponse(c.Writer, e.Err.Error(), e.Status)
-		return
-	}
-
-	response.SuccessResponse(c.Writer, summary, http.StatusOK)
 }
 
 func (h *adminHandlers) ValidateQueryLoans(c *gin.Context, pagination *utils.Pagination) (string, []int) {
