@@ -1,6 +1,14 @@
 # final-project-backend
 
-RESTFUL API of P2P Lending using Golang, PostgreSQL, and JWT
+## Project Description
+
+RESTFUL API of P2P Lending using Golang, PostgreSQL, and JWT.
+
+## API Deployment & Docs
+
+API: https://lendme-backend-production.up.railway.app
+
+API Docs: https://lendme-backend-production.up.railway.app/docs/
 
 ## Project Description
 
@@ -39,12 +47,3 @@ to see the api doc, you can open [http://localhost:8080/docs](http://localhost:8
 ### Step 5: Check unit test coverage
 
 from the root folder, run `make test-coverage`
-
-## Note
-
-list of transactions endpoints example:
-- `localhost:8080/api/v1/transactions`
-- `localhost:8080/api/v1/transactions?s=money&sortBy=amount&sort=desc&limit=10&page=1`
-- `localhost:8080/api/v1/transactions?sortBy=recipient_id&sort=desc`
-- `localhost:8080/api/v1/transactions?sortBy=amount&sort=asc`
-
